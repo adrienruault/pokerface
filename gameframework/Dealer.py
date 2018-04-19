@@ -9,12 +9,15 @@ from .Card import Card
 
 class Dealer:
 
-    def __init__(self, drawn_cards):
-        self.__drawn_cards = drawn_cards
+    def __init__(self, already_drawn_cards=[]):
+        self.__drawn_cards = already_drawn_cards
         self.__random_gen = random.Random(datetime.datetime.now())
 
     # return one card taking into account cards that have already been drawn
     def draw(self):
+        if len(self.__drawn_cards) >= 52:
+            raise PokerError('Trying to distribute more than 52 cards')
+        
         value = self.__random_gen.randint(1, 13)
         suit = self.__random_gen.randint(1,4)
         new_card = Card(value, suit)

@@ -25,7 +25,7 @@ class Showdown:
             raise WrongTypeError('Trying to construct a Showdown object without a Hand object')
         if type(board) is not Board:
             raise WrongTypeError('Trying to construct a Showdown object without a Board object')
-        if board.get_turn() != 3:
+        if board.stage != 3:
             raise PokerError("Trying to construct a Showdown object with a Board object that haven't passed river")
 
         self.__cards = sorted(hand.get_cards() + board.get_cards())
@@ -35,9 +35,12 @@ class Showdown:
         # rank ranges between 1 and 9
         self.__rank = characterisation[0]
 
-        # kickers is an array of 5 values allowing to differentiate hands of same rank
+        # kickers is a numpy array of 5 values allowing to differentiate hands of same rank
         self.__kickers = characterisation[1]
 
+        # rank_array is a numpy array resulting of the concatenation between the
+        # rank and the kickers. It has to be of length 6
+        self.__rank_array = np.append(np.array(characterisation[0]), characterisation[1])
 
 
 
@@ -55,16 +58,21 @@ class Showdown:
     # 2: pair
     # 1: high card
     def __hand_characterisation(self):
+        """
+        Return a tuple with the first argument being the rank of the hand and the
+        second one being a numpy array of length 5 representing the 5 kickers of
+        the hand.
+        """
         value_array = np.array(list(map(lambda x: x.get_value(), self.__cards)))
-        suit_array = np.array(list(map(lambda x: x.get_suit(), self.__cards)))
+        suit__array = np.array(list(map(lambda x: x.get_suit(), self.__cards)))
         value_bins = np.bincount(value_array, minlength=14)
 
         # Two lists used to keep highest value of successive cards and the count of successive cards
-        straight_flush_current_value = [0 for i in range(4)]
-        straight_flush_count = [0 for i in range(4)]
+        straight__flush__current_value = [0 for i in range(4)]
+        straight__flush__count = [0 for i in range(4)]
 
-        # suit_count is only used to spot a flush later
-        suit_count = np.zeros(4)
+        # suit__count is only used to spot a flush later
+        suit__count = np.zeros(4)
 
         # go through showdown's cards to check straight flush and plain flush
         for card in self.__cards:
@@ -72,42 +80,42 @@ class Showdown:
 
             # checking straight flush
             current_value = card.get_value()
-            if straight_flush_current_value[suit-1] == 0:
-                straight_flush_current_value[suit-1] = current_value
-                straight_flush_count[suit-1] = 1
-            elif current_value == straight_flush_current_value[suit-1] + 1:
-                straight_flush_current_value[suit-1] = current_value
-                straight_flush_count[suit-1] += 1
+            if straight__flush__current_value[suit-1] == 0:
+                straight__flush__current_value[suit-1] = current_value
+                straight__flush__count[suit-1] = 1
+            elif current_value == straight__flush__current_value[suit-1] + 1:
+                straight__flush__current_value[suit-1] = current_value
+                straight__flush__count[suit-1] += 1
             else:
-                straight_flush_current_value[suit-1] = current_value
-                straight_flush_count[suit-1] = 1
+                straight__flush__current_value[suit-1] = current_value
+                straight__flush__count[suit-1] = 1
 
-            if straight_flush_count[suit-1] >= 5:
+            if straight__flush__count[suit-1] >= 5:
                 values_ans = np.zeros(5)
-                values_ans[0] = straight_flush_current_value[suit-1]
+                values_ans[0] = straight__flush__current_value[suit-1]
                 return 9, values_ans
 
-            # suit_count is only used to spot a flush later
-            suit_count[suit-1] += 1
+            # suit__count is only used to spot a flush later
+            suit__count[suit-1] += 1
 
 
 
         # intermediary step: check three of a kind and pairs
-        four_of_a_kind_value = np.where(value_bins==4)[0]
+        four__of__a__kind__value = np.where(value_bins==4)[0]
         three_of_a_kind_value = np.where(value_bins==3)[0]
         pair_values = np.where(value_bins==2)[0]
 
         # check four of a kind
-        if len(four_of_a_kind_value) != 0:
+        if len(four__of__a__kind__value) != 0:
             values_ans = np.zeros(5)
-            values_ans[0] = four_of_a_kind_value[0]
+            values_ans[0] = four__of__a__kind__value[0]
 
             # spotting the kicker
-            if self.__cards[-1].get_value() == four_of_a_kind_value[0]:
-                kicker_value = self.__cards[-2].get_value()
+            if self.__cards[-1].get_value() == four__of__a__kind__value[0]:
+                kicker__value = self.__cards[-2].get_value()
             else:
-                kicker_value = self.__cards[-1].get_value()
-            values_ans[1] = kicker_value
+                kicker__value = self.__cards[-1].get_value()
+            values_ans[1] = kicker__value
 
             return 8, values_ans
 
@@ -121,10 +129,10 @@ class Showdown:
             return 7, values_ans
 
         # check flush
-        flush_finder = np.where(suit_count >= 5)[0]
-        if len(flush_finder) != 0:
-            suit_flush = flush_finder[0]
-            flush_values = value_array[np.where(suit_array == suit_flush)]
+        flush__finder = np.where(suit__count >= 5)[0]
+        if len(flush__finder) != 0:
+            suit_flush = flush__finder[0]
+            flush_values = value_array[np.where(suit__array == suit_flush)]
             values_ans = flush_values[-5:][::-1]
             return 6, values_ans
 
