@@ -4,6 +4,7 @@ from .Dealer import Dealer
 from .Board import Board
 from .Hand import Hand
 from .Error import *
+import copy
 
 class Game:
 
@@ -16,10 +17,13 @@ class Game:
                 raise PokerError("Trying to instantiate a Game object with two players having the same id")
             self.__players_id += [current_id]
 
-        self.__players_list = players_list
-        self.__dealer =  Dealer()
-        self.__board = Board(self.dealer)
+        #self.__players_list = players_list
+        self.__players_list = copy.deepcopy(players_list)
+        self.__dealer =  Dealer([])
+        self.__board = Board(self.__dealer)
         self.__state = "start"
+        self.__small_blind = 1.
+        self.__pot = 0.
 
     @property
     def dealer(self):
@@ -91,9 +95,14 @@ class Game:
 
 
     def flop(self):
-        print("inside:", self.__state)
-        print("what:", self.__state != "pre-flop")
         if self.__state != "pre-flop":
             raise PokerError("Trying to distribute flop in a game that is not in pre-flop state")
 
         self.__board.flop()
+        self.__state = "pre-turn"
+
+    def turn(self):
+        if self.__state != "pre-turn":
+            raise PokerError("Trying to distribute turn in a game that is not in pre-turn state")
+
+        self.__board.turn()

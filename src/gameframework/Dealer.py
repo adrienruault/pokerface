@@ -10,7 +10,7 @@ from .Error import *
 
 class Dealer:
 
-    def __init__(self, already_drawn_cards=[]):
+    def __init__(self, already_drawn_cards):
         for i, card in enumerate(already_drawn_cards):
             if not isinstance(card, Card):
                 raise PokerError("Trying to instantiate a Dealer object and specifying already_drawn_cards that are not Card objects")

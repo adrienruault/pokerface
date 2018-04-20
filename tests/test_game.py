@@ -1,6 +1,7 @@
 import pytest
 
 from gameframework import *
+import pdb
 
 
 def initialize():
@@ -43,12 +44,17 @@ def test_flop():
         game.flop()
 
     game.distribute_to_players()
-    print(game.state)
+
     game.flop()
 
-    print(game.dealer.drawn_cards)
-
     assert len(game.dealer.drawn_cards) == 9
+
+def test_turn():
+    game = initialize()
+
+    with pytest.raises(Exception):
+        game.turn()
+
 
 
 def test_get_winner():
