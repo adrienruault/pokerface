@@ -6,6 +6,8 @@ from .Hand import Hand
 
 class Player():
 
+    ACTIONS = ['check', 'open', 'fold', 'call', 'raise']
+
     def __init__(self, id_, wallet):
         if not isinstance(id_, int):
             raise WrongTypeError("The Player id that you provided is not an int.")
@@ -13,10 +15,9 @@ class Player():
             raise WrongTypeError("The Player's wallet that you provided is not a float")
 
         self.__id = id_
-
         self.__wallet = wallet
-
         self.__hand = None
+        self.__next_action = None
 
     def receive_hand(self, hand):
         self.__hand = hand
@@ -38,3 +39,13 @@ class Player():
     @property
     def hand(self):
         return self.__hand
+
+    @property
+    def next_action(self):
+        return self.__decision
+
+    @next_action.setter
+    def nex_action(self, new_action):
+        if new_decison not in ACTIONS:
+            raise PokerError("Trying to assign an action to a Player object that is not allowed ")
+        self.__next_action = new_action

@@ -9,16 +9,19 @@ import copy
 class Game:
 
     def __init__(self, players_list):
-        self.__players_id = []
+        players_id_list = []
+        self.__players_dict = {}
 
         for player in players_list:
             current_id = player.id
-            if current_id in self.__players_id:
+            if current_id in players_id_list:
                 raise PokerError("Trying to instantiate a Game object with two players having the same id")
-            self.__players_id += [current_id]
+            self.__players_dict[current_id] = player
+            players_id_list += [current_id]
 
         #self.__players_list = players_list
         self.__players_list = copy.deepcopy(players_list)
+        self.__playing_order = players_id_list
         self.__dealer =  Dealer([])
         self.__board = Board(self.__dealer)
         self.__state = "start"
