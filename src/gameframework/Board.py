@@ -44,13 +44,29 @@ class Board:
     def __repr__(self):
         return self.__cards.__repr__()
 
+    def reset(self):
+        self.__cards = [None, None, None, None, None]
+        self.__stage = 0
+
+
     @property
     def stage(self):
         return self.__stage
 
-    def get_cards(self):
+    @stage.setter
+    def stage(self, new_stage):
+        self.__stage = new_stage
+
+
+    @property
+    def cards(self):
         return self.__cards
 
-    def reset(self):
-        self.__cards = [None, None, None, None, None]
-        self.__stage = 0
+    @cards.setter
+    def cards(self, new_cards):
+        self.__cards = new_cards
+
+
+    @property
+    def dealer(self):
+        return self.__dealer

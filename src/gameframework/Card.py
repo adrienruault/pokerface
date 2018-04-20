@@ -1,7 +1,7 @@
 
 
 
-
+from .Error import *
 
 
 
@@ -12,8 +12,10 @@ class Card:
 
 
     def __init__(self, value, suit):
-        assert 0 < value <= 13
-        assert 0 < suit <= 4
+        if value < 1 or value > 13:
+            raise PokerError("Trying to instantiate a Card object whose value is not in [1,13]")
+        if suit < 1 or suit > 4:
+            raise PokerError("Trying to instantiate a Card object whose suit is not in [1,4]")
         self.__value = value
         self.__suit = suit
 
@@ -21,16 +23,16 @@ class Card:
         if (type(other) is not Card):
             raise WrongTypeError('Trying to check equality of a Card with an object that is not a Card')
 
-        return (other.get_value() == self.__value and other.get_suit() == self.__suit)
+        return (other.value == self.__value and other.suit == self.__suit)
 
     def __lt__(self, other):
         if type(other) is not Card:
             raise WrongTypeError('Trying to compare a Card with something else than a Card object.')
 
-        if self.__value < other.get_value():
+        if self.__value < other.value:
             return True
-        elif self.__value == other.get_value():
-            return self.__suit < other.get_suit()
+        elif self.__value == other.value:
+                return self.__suit < other.suit
         else:
             return False
 
@@ -38,9 +40,10 @@ class Card:
     def __repr__(self):
         return self.VALUES[self.__value-1] + "-" + self.SUITS[self.__suit-1]
 
-
-    def get_value(self):
+    @property
+    def value(self):
         return self.__value
 
-    def get_suit(self):
+    @property
+    def suit(self):
         return self.__suit

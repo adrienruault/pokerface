@@ -28,7 +28,7 @@ class Showdown:
         if board.stage != 3:
             raise PokerError("Trying to construct a Showdown object with a Board object that haven't passed river")
 
-        self.__cards = sorted(hand.get_cards() + board.get_cards())
+        self.__cards = sorted(hand.cards + board.cards)
 
         characterisation = self.__hand_characterisation()
 
@@ -63,8 +63,8 @@ class Showdown:
         second one being a numpy array of length 5 representing the 5 kickers of
         the hand.
         """
-        value_array = np.array(list(map(lambda x: x.get_value(), self.__cards)))
-        suit__array = np.array(list(map(lambda x: x.get_suit(), self.__cards)))
+        value_array = np.array(list(map(lambda x: x.value, self.__cards)))
+        suit__array = np.array(list(map(lambda x: x.value, self.__cards)))
         value_bins = np.bincount(value_array, minlength=14)
 
         # Two lists used to keep highest value of successive cards and the count of successive cards
@@ -76,10 +76,10 @@ class Showdown:
 
         # go through showdown's cards to check straight flush and plain flush
         for card in self.__cards:
-            suit = card.get_suit()
+            suit = card.suit
 
             # checking straight flush
-            current_value = card.get_value()
+            current_value = card.value
             if straight__flush__current_value[suit-1] == 0:
                 straight__flush__current_value[suit-1] = current_value
                 straight__flush__count[suit-1] = 1
@@ -111,10 +111,10 @@ class Showdown:
             values_ans[0] = four__of__a__kind__value[0]
 
             # spotting the kicker
-            if self.__cards[-1].get_value() == four__of__a__kind__value[0]:
-                kicker__value = self.__cards[-2].get_value()
+            if self.__cards[-1].value == four__of__a__kind__value[0]:
+                kicker__value = self.__cards[-2].value
             else:
-                kicker__value = self.__cards[-1].get_value()
+                kicker__value = self.__cards[-1].value
             values_ans[1] = kicker__value
 
             return 8, values_ans
