@@ -15,7 +15,9 @@ def test_init():
 
     players_list1 = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
     game1 = Game(players_list1)
-    assert game1.players_list == players_list1
+    for player in players_list1:
+        assert game1.players_dict[player.id] == player
+    #assert game1.players_dict == players_list1
     assert game1.state == "start"
 
     players_list2 = [Player(1, 1000.), Player(1, 1000.)]
@@ -28,7 +30,7 @@ def test_distribute_to_players():
 
     game.distribute_to_players()
 
-    for player in game.players_list:
+    for _, player in game.players_dict.items():
         assert isinstance(player.hand, Hand)
 
     assert len(game.dealer.drawn_cards) == 6

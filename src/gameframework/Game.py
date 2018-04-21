@@ -16,16 +16,16 @@ class Game:
             current_id = player.id
             if current_id in players_id_list:
                 raise PokerError("Trying to instantiate a Game object with two players having the same id")
-            self.__players_dict[current_id] = player
+            self.__players_dict[current_id] = copy.deepcopy(player)
             players_id_list += [current_id]
 
         #self.__players_list = players_list
-        self.__players_list = copy.deepcopy(players_list)
         self.__playing_order = players_id_list
         self.__dealer =  Dealer([])
         self.__board = Board(self.__dealer)
         self.__state = "start"
         self.__small_blind = 1.
+        self.__big_blind = 2 * self.__small_blind
         self.__pot = 0.
 
     @property
@@ -33,8 +33,8 @@ class Game:
         return self.__dealer
 
     @property
-    def players_list(self):
-        return self.__players_list
+    def players_dict(self):
+        return self.__players_dict
 
     @property
     def players_id(self):
@@ -84,18 +84,26 @@ class Game:
 
         return best_players
 
+    def collect_money(self, player, amount):
+        if not isinstance(player, Player):
+            raise PokerError("Trying to collect money from an object which is not a player")
+        if not isinstance(amount, float):
+            raise PokerError("Trying to collect something else than money from a Player")
+
+        player.decrease_wallet(amount)
+        self.__pot += amount
+
 
     def distribute_to_players(self):
         if self.__state != "start":
             raise PokerError("Trying to distribute cards to players in a game that is not in start state")
 
-        for player in self.__players_list:
+        for _, player in self.__players_dict.items():
             hand = Hand(self.__dealer)
             hand.receive_cards()
             player.receive_hand(hand)
 
         self.__state = "pre-flop"
-
 
     def flop(self):
         if self.__state != "pre-flop":

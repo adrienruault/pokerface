@@ -22,6 +22,11 @@ class Player():
     def receive_hand(self, hand):
         self.__hand = hand
 
+    def decrease_wallet(self, amount):
+        if amount > self.__wallet:
+            raise PokerError("Trying to collect money from a Player object but it is more than it has")
+        self.__wallet -= amount
+
     def __eq__(self, other):
         if (type(other) is not Player):
             raise WrongTypeError('Trying to check equality of a Player with an object that is not a Player')
@@ -45,7 +50,7 @@ class Player():
         return self.__decision
 
     @next_action.setter
-    def nex_action(self, new_action):
+    def next_action(self, new_action):
         if new_decison not in ACTIONS:
             raise PokerError("Trying to assign an action to a Player object that is not allowed ")
         self.__next_action = new_action
