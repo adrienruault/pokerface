@@ -15,6 +15,7 @@ def test_init():
 
     players_list1 = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
     game1 = Game(players_list1)
+
     for player in players_list1:
         assert game1.players_dict[player.id] == player
     #assert game1.players_dict == players_list1
@@ -23,6 +24,14 @@ def test_init():
     players_list2 = [Player(1, 1000.), Player(1, 1000.)]
     with pytest.raises(PokerError):
         game2 = Game(players_list2)
+
+    player = game1.get_player_from_id(1)
+    player_next1 = player.next_player
+    player_next2 = player_next1.next_player
+
+    assert player == players_list1[0]
+    assert player_next1 == players_list1[1]
+    assert player_next2 == players_list1[2]
 
 
 def test_distribute_hands():

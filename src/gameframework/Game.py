@@ -10,23 +10,42 @@ import copy
 class Game:
 
     def __init__(self, players_list):
+        if len(players_list) < 2:
+            raise PokerError("Trying to instantiate a Game object with less than 2 players")
+
         players_id_list = []
         self.__players_dict = {}
 
         for player in players_list:
             current_id = player.id
+
             if current_id in players_id_list:
                 raise PokerError("Trying to instantiate a Game object with two players having the same id")
-            self.__players_dict[current_id] = copy.deepcopy(player)
+
+            # Adding players to the dictionary
+            new_player = copy.deepcopy(player)
+            self.__players_dict[current_id] = new_player
             players_id_list += [current_id]
 
-        #self.__players_list = players_list
+        nb_players = len(players_id_list)
+        for i in range(nb_players):
+            current_player = self.get_player_from_id(players_id_list[i])
+            next_player = self.get_player_from_id(players_id_list[(i+1) % nb_players])
+            prev_player = self.get_player_from_id(players_id_list[i-1])
+
+            current_player.playing_flag = True
+            current_player.next_player = next_player
+            current_player.prev_player = prev_player
+
+        # Attributes
         self.__playing_order = players_id_list
         self.__dealer =  Dealer([])
         self.__board = Board(self.__dealer)
         self.__state = "start"
         self.__small_blind = 1.
         self.__big_blind = 2 * self.__small_blind
+        self.__small_blind_player_id = players_id_list[0]
+        self.__big_blind_player_id = self.get_player_from_id(self.__small_blind_player_id).next_player.id
         self.__pot = 0.
 
     @property
@@ -63,7 +82,7 @@ class Game:
 
 
     def get_player_from_id(self, player_id):
-        return copy.deepcopy(self.__players_dict[player_id])
+        return self.__players_dict[player_id]
 
 
     def transfer_money(self, player_id, amount):
@@ -103,15 +122,26 @@ class Game:
         self.__pot -= amount
 
 
+    def bet_round(self):
+        tmp_playing_order = copy.deepcopy(self.__playing_order)
+        # first_round
+        for player_id in tmp_playing_order:
+            player = self.get_player_from_id(player_id)
+            action = player.next_action
+
+            if action == 'fold':
+                pass
+
+
+
+
 
     def collect_blinds(self):
         if self.__state != "start":
             raise PokerError("Trying to get blinds in a game that is not in start state")
-        small_blind_player_id = self.__playing_order[0]
-        big_blind_player_id = self.__playing_order[1]
 
-        self.transfer_money(small_blind_player_id, (-1) * self.__small_blind)
-        self.transfer_money(big_blind_player_id, (-1) * self.__big_blind)
+        self.transfer_money(self.__small_blind_player_id, (-1) * self.__small_blind)
+        self.transfer_money(self.__big_blind_player_id, (-1) * self.__big_blind)
 
         self.__state = "blinds-collected"
 
@@ -128,12 +158,14 @@ class Game:
 
         self.__state = "pre-flop"
 
+
     def flop(self):
         if self.__state != "pre-flop":
             raise PokerError("Trying to distribute flop in a game that is not in pre-flop state")
 
         self.__board.flop()
         self.__state = "pre-turn"
+
 
     def turn(self):
         if self.__state != "pre-turn":

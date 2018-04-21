@@ -19,6 +19,10 @@ class Player():
         self.__hand = None
         self.__next_action = None
 
+        self.__next_player = None
+        self.__prev_player = None
+        self.__playing_flag = None
+
     def receive_hand(self, hand):
         self.__hand = hand
 
@@ -35,7 +39,7 @@ class Player():
 
 
     def __repr__(self):
-        return "id: " + str(self.__id) + ' / Hand: ' + self.__hand.__repr__()
+        return "{id: " + str(self.__id) + ' | Hand: ' + self.__hand.__repr__() + "}"
 
     @property
     def id(self):
@@ -50,8 +54,32 @@ class Player():
         return self.__hand
 
     @property
+    def next_player(self):
+        return self.__next_player
+
+    @next_player.setter
+    def next_player(self, new_next_player):
+        self.__next_player = new_next_player
+
+    @property
+    def prev_player(self):
+        return self.__prev_player
+
+    @prev_player.setter
+    def prev_player(self, new_prev_player):
+        self.__prev_player = new_prev_player
+
+    @property
     def next_action(self):
         return self.__decision
+
+    @property
+    def playing_flag(self):
+        return self.__playing_flag
+
+    @playing_flag.setter
+    def playing_flag(self, new_playing_flag):
+        self.__playing_flag = new_playing_flag
 
     @next_action.setter
     def next_action(self, new_action):
