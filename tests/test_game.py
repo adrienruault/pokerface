@@ -21,7 +21,7 @@ def test_init():
     assert game1.state == "start"
 
     players_list2 = [Player(1, 1000.), Player(1, 1000.)]
-    with pytest.raises(Exception):
+    with pytest.raises(PokerError):
         game2 = Game(players_list2)
 
 
@@ -73,11 +73,13 @@ def test_transfer_money():
     player1 = game.get_player_from_id(1)
     assert abs(player1.wallet - 990.) < 1e-8
 
-    game.transfer_money(2, 20.)
+    game.transfer_money(2, 5.)
     player2 = game.get_player_from_id(2)
-    assert abs(player2.wallet - 1020.) < 1e-8
+    assert abs(player2.wallet - 1005.) < 1e-8
 
-    with pytest.raises(Exception):
+    assert abs(game.pot - (10 - 5)) < 1e-8
+
+    with pytest.raises(MoneyError):
         game.transfer_money(3, 2000.)
 
 
@@ -95,6 +97,8 @@ def test_collect_blinds():
 
     player3 = game.get_player_from_id(3)
     assert abs(player3.wallet - 1000) < 1e-8
+
+    assert abs(game.pot - (game.small_blind + game.big_blind)) < 1e-8
 
     with pytest.raises(PokerError):
         game.collect_blinds()
