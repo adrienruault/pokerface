@@ -34,12 +34,12 @@ class Game:
         return self.__dealer
 
     @property
-    def players_dict(self):
-        return copy.deepcopy(self.__players_dict)
+    def playing_order(self):
+        return self.__playing_order
 
     @property
-    def players_id(self):
-        return self.__players_id
+    def players_dict(self):
+        return copy.deepcopy(self.__players_dict)
 
     @property
     def board(self):
@@ -49,28 +49,60 @@ class Game:
     def state(self):
         return self.__state
 
+    def get_player_from_id(self, player_id):
+        return copy.deepcopy(self.__players_dict[player_id])
 
-    def collect_money(self, player_id, amount):
-        player = self.__players_dict[player_id]
-        if not isinstance(player, Player):
-            raise PokerError("Trying to collect money from an object which is not a player")
+
+    def transfer_money(self, player_id, amount):
+        """
+        Transfer money from a player to the games's pot.
+        If amount is positive then the player's wallet is decreased by the specified amount
+        and the game's pot is credited with the same amount.
+        Otherwise the money is transfered the other way round.
+        For example game.transfer_money(1, -10) transfer 10 from player's wallet with id 1
+        to the game object.
+
+        Parameters
+        ----------
+        player_id : int
+            Id of the player concerned by the transfer.
+        amount : float
+            Money to transfer from game to player.
+
+        Returns
+        -------
+        None
+
+        """
+
+        if not isinstance(player_id, int):
+            raise WrongTypeError("Trying to collect money with a player_id that is not an int.")
         if not isinstance(amount, float):
-            raise PokerError("Trying to collect something else than money from a Player")
+            raise WrongTypeError("Trying to collect money with an amount of money that is not a float.")
 
-        player.decrease_wallet(amount)
-        self.__pot += amount
+        player = self.__players_dict[player_id]
 
-    def get_blinds(self):
-        small_blind_player = self.__players_dict[self.__playing_order[0]]
-        big_blind_player = self.__players_dict[self.__playing_order[1]]
+        player.change_wallet(amount)
+        self.__pot -= amount
 
-        self.__collect_money(small_blind_player, self.__small_blind)
-        self.__collect_money(big_blind_player, self.__big_blind)
+
+
+    def collect_blinds(self):
+        if self.__state != "start":
+            raise PokerError("Trying to get blinds in a game that is not in start state")
+        small_blind_player_id = self.__playing_order[0]
+        big_blind_player_id = self.__playing_order[1]
+
+        self.transfer_money(small_blind_player_id, self.__small_blind)
+        self.transfer_money(big_blind_player_id, self.__big_blind)
+
+        self.__state = "blinds-collected"
+
 
 
     def distribute_hands(self):
-        if self.__state != "start":
-            raise PokerError("Trying to distribute cards to players in a game that is not in start state")
+        if self.__state != "blinds-collected":
+            raise PokerError("Trying to get blinds in a game that is not in blinds-collected state")
 
         for _, player in self.__players_dict.items():
             hand = Hand(self.__dealer)

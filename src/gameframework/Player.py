@@ -22,14 +22,14 @@ class Player():
     def receive_hand(self, hand):
         self.__hand = hand
 
-    def decrease_wallet(self, amount):
+    def change_wallet(self, amount):
         if amount > self.__wallet:
-            raise PokerError("Trying to collect money from a Player object but it is more than it has")
-        self.__wallet -= amount
+            raise PokerError("Trying to collect money from a Player object but it is more than it has.")
+        self.__wallet += amount
 
     def __eq__(self, other):
         if (type(other) is not Player):
-            raise WrongTypeError('Trying to check equality of a Player with an object that is not a Player')
+            raise WrongTypeError('Trying to check equality of a Player with an object that is not a Player.')
 
         return (other.id == self.__id)
 

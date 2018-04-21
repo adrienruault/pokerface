@@ -13,7 +13,7 @@ class Dealer:
     def __init__(self, already_drawn_cards):
         for i, card in enumerate(already_drawn_cards):
             if not isinstance(card, Card):
-                raise PokerError("Trying to instantiate a Dealer object and specifying already_drawn_cards that are not Card objects")
+                raise WrongTypeError("Trying to instantiate a Dealer object and specifying already_drawn_cards that are not Card objects")
 
             for j in range (len(already_drawn_cards)):
                 if card == already_drawn_cards[j] and j != i:

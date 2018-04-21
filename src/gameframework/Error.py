@@ -6,3 +6,6 @@ class WrongTypeError(Exception):
 
 class PokerError(Exception):
     pass
+
+class MoneyError(Exception):
+    pass

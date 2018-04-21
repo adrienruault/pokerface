@@ -28,6 +28,8 @@ def test_init():
 def test_distribute_hands():
     game = initialize()
 
+    game.collect_blinds()
+
     game.distribute_hands()
 
     for _, player in game.players_dict.items():
@@ -35,39 +37,52 @@ def test_distribute_hands():
 
     assert len(game.dealer.drawn_cards) == 6
 
-    with pytest.raises(Exception):
+    with pytest.raises(PokerError):
         game.distribute_hands()
 
 
 def test_flop():
     game = initialize()
 
-    with pytest.raises(Exception):
+    with pytest.raises(PokerError):
         game.flop()
 
+    game.collect_blinds()
     game.distribute_hands()
 
     game.flop()
-
     assert len(game.dealer.drawn_cards) == 9
+
+
+    with pytest.raises(PokerError):
+        game.flop()
+
 
 def test_turn():
     game = initialize()
 
-    with pytest.raises(Exception):
+    with pytest.raises(PokerError):
         game.turn()
 
-def test_get_winner():
-    game = initialize()
 
-    with pytest.raises(Exception):
-        game.get_winner()
-
-
-def test_collect_money():
+def test_transfer_money():
     players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
     game = Game(players_list)
 
-    game.collect_money(1, 10.)
-    player = game.players_dict[1]
-    assert abs(player.wallet - 990.) < 1e-8
+    game.transfer_money(1, -10.)
+    player1 = game.get_player_from_id(1)
+    assert abs(player1.wallet - 990.) < 1e-8
+
+    game.transfer_money(2, 20.)
+    player2 = game.get_player_from_id(2)
+    assert abs(player2.wallet - 1020.) < 1e-8
+
+    with pytest.raises(Exception):
+        game.transfer_money(3, 2000.)
+
+
+def test_collect_blinds():
+    players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+    game = Game(players_list)
+
+    game.collect_blinds()
