@@ -49,6 +49,19 @@ class Game:
     def state(self):
         return self.__state
 
+    @property
+    def small_blind(self):
+        return self.__small_blind
+
+    @property
+    def big_blind(self):
+        return self.__big_blind
+
+    @property
+    def pot(self):
+        return self.__pot
+
+
     def get_player_from_id(self, player_id):
         return copy.deepcopy(self.__players_dict[player_id])
 
@@ -59,8 +72,10 @@ class Game:
         If amount is positive then the player's wallet is decreased by the specified amount
         and the game's pot is credited with the same amount.
         Otherwise the money is transfered the other way round.
-        For example game.transfer_money(1, -10) transfer 10 from player's wallet with id 1
-        to the game object.
+        For example game.transfer_money(1, 10) transfer 10 from game's pot
+        to player's wallet with id 1.
+        And game.transfer_money(2, -20) transfer 20 from player's wallet with id 2
+        to game's pot.
 
         Parameters
         ----------
@@ -79,6 +94,8 @@ class Game:
             raise WrongTypeError("Trying to collect money with a player_id that is not an int.")
         if not isinstance(amount, float):
             raise WrongTypeError("Trying to collect money with an amount of money that is not a float.")
+        if amount > self.__pot:
+            raise MoneyError("Trying to distribute more than there is in the pot")
 
         player = self.__players_dict[player_id]
 
@@ -93,8 +110,8 @@ class Game:
         small_blind_player_id = self.__playing_order[0]
         big_blind_player_id = self.__playing_order[1]
 
-        self.transfer_money(small_blind_player_id, self.__small_blind)
-        self.transfer_money(big_blind_player_id, self.__big_blind)
+        self.transfer_money(small_blind_player_id, (-1) * self.__small_blind)
+        self.transfer_money(big_blind_player_id, (-1) * self.__big_blind)
 
         self.__state = "blinds-collected"
 
