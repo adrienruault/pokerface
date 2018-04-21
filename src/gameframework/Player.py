@@ -42,6 +42,10 @@ class Player():
         return self.__id
 
     @property
+    def wallet(self):
+        return self.__wallet
+
+    @property
     def hand(self):
         return self.__hand
 
