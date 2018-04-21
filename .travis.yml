@@ -6,3 +6,6 @@ install:
 
 script:
   - pytest --cov=gameframework .
+  
+after_success:
+  - coveralls
