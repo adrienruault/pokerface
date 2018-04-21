@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/adrienruault/pokerface.svg?branch=master)](https://travis-ci.org/adrienruault/pokerface)
+
 # pokerface
 
 `gameframework` is a package that emulates poker games.
