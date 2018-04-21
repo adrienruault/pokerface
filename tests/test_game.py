@@ -35,7 +35,7 @@ def test_distribute_hands():
     for _, player in game.players_dict.items():
         assert isinstance(player.hand, Hand)
 
-    assert len(game.dealer.drawn_cards) == 5
+    assert len(game.dealer.drawn_cards) == 6
 
     with pytest.raises(PokerError):
         game.distribute_hands()
