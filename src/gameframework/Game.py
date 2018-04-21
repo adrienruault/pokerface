@@ -49,6 +49,15 @@ class Game:
     def state(self):
         return self.__state
 
+    @property
+    def small_blind(self):
+        return self.__small_blind
+
+    @property
+    def big_blind(self):
+        return self.__big_blind
+
+
     def get_player_from_id(self, player_id):
         return copy.deepcopy(self.__players_dict[player_id])
 
@@ -93,8 +102,8 @@ class Game:
         small_blind_player_id = self.__playing_order[0]
         big_blind_player_id = self.__playing_order[1]
 
-        self.transfer_money(small_blind_player_id, self.__small_blind)
-        self.transfer_money(big_blind_player_id, self.__big_blind)
+        self.transfer_money(small_blind_player_id, (-1) * self.__small_blind)
+        self.transfer_money(big_blind_player_id, (-1) * self.__big_blind)
 
         self.__state = "blinds-collected"
 

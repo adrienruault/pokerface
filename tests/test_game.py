@@ -86,3 +86,15 @@ def test_collect_blinds():
     game = Game(players_list)
 
     game.collect_blinds()
+
+    player1 = game.get_player_from_id(1)
+    assert abs(player1.wallet - (1000 - game.small_blind)) < 1e-8
+
+    player2 = game.get_player_from_id(2)
+    assert abs(player2.wallet - (1000 - game.big_blind)) < 1e-8
+
+    player3 = game.get_player_from_id(3)
+    assert abs(player3.wallet - 1000) < 1e-8
+
+    with pytest.raises(PokerError):
+        game.collect_blinds()
