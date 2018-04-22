@@ -25,7 +25,7 @@ def main():
     game.restart()
 ```
 
-At each step of the game, the the `Player.next_action` method is called to know the policy of each Player when they have to take a decision.
+At each step of the game, the the `Player.next_action()` method is called to know the policy of each player when they have to take a decision. Finding a good policy to be coded in this method is all the point of this project.
 
 
 ## Tests
