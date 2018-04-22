@@ -22,7 +22,7 @@ def main():
     game.river()
     
     # The restart method allows to start a new game with the same set of players
-    game.restart
+    game.restart()
 ```
 
 At each step of the game, the the `Player.next_action` method is called to know the policy of each Player when they have to take a decision.
