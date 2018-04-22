@@ -20,6 +20,8 @@ class Card:
         self.__suit = suit
 
     def __eq__(self, other):
+        if other == None:
+            return False
         if (type(other) is not Card):
             raise WrongTypeError('Trying to check equality of a Card with an object that is not a Card')
 
