@@ -3,6 +3,7 @@
 import numpy as np
 from .Hand import Hand
 from .Board import Board
+from .Error import PokerError
 
 
 
@@ -31,6 +32,10 @@ class Showdown:
         self.__cards = sorted(hand.cards + board.cards)
 
         characterisation = self.__hand_characterisation()
+
+        if characterisation[1].shape[0] != 5:
+            print("Spotted:", characterisation, hand, board)
+            raise PokerError("WooooooW")
 
         # rank ranges between 1 and 9
         self.__rank = characterisation[0]
@@ -64,15 +69,16 @@ class Showdown:
         the hand.
         """
         value_array = np.array(list(map(lambda x: x.value, self.__cards)))
-        suit__array = np.array(list(map(lambda x: x.value, self.__cards)))
+        suit_array = np.array(list(map(lambda x: x.suit, self.__cards)))
         value_bins = np.bincount(value_array, minlength=14)
 
         # Two lists used to keep highest value of successive cards and the count of successive cards
         straight__flush__current_value = [0 for i in range(4)]
         straight__flush__count = [0 for i in range(4)]
 
-        # suit__count is only used to spot a flush later
-        suit__count = np.zeros(4)
+        # suit_count is only used to spot a flush later
+        # Each entry counts the number of cards encountered in each suit
+        suit_count = np.zeros(4)
 
         # go through showdown's cards to check straight flush and plain flush
         for card in self.__cards:
@@ -95,8 +101,8 @@ class Showdown:
                 values_ans[0] = straight__flush__current_value[suit-1]
                 return 9, values_ans
 
-            # suit__count is only used to spot a flush later
-            suit__count[suit-1] += 1
+            # suit_count is only used to spot a flush later
+            suit_count[suit-1] += 1
 
 
 
@@ -129,11 +135,13 @@ class Showdown:
             return 7, values_ans
 
         # check flush
-        flush__finder = np.where(suit__count >= 5)[0]
-        if len(flush__finder) != 0:
-            suit_flush = flush__finder[0]
-            flush_values = value_array[np.where(suit__array == suit_flush)]
+        flush_finder = np.where(suit_count >= 5)[0]
+        if len(flush_finder) != 0:
+            suit_flush = flush_finder[0] + 1
+            flush_values = value_array[np.where(suit_array == suit_flush)]
             values_ans = flush_values[-5:][::-1]
+            print("suit_flush:", suit_flush)
+            print("flush_values", flush_values)
             return 6, values_ans
 
 
