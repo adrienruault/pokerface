@@ -38,7 +38,6 @@ class Game:
             current_player.prev_player = prev_player
 
         # Attributes
-        self.__playing_order = players_id_list
         self.__dealer =  Dealer([])
         self.__board = Board(self.__dealer)
         self.__state = "start"
@@ -46,15 +45,13 @@ class Game:
         self.__big_blind = 2 * self.__small_blind
         self.__small_blind_player_id = players_id_list[0]
         self.__big_blind_player_id = self.get_player_from_id(self.__small_blind_player_id).next_player.id
+        self.__controlling_player_id = self.__big_blind_player_id
         self.__pot = 0.
+        self.__target_bet = 0.
 
     @property
     def dealer(self):
         return self.__dealer
-
-    @property
-    def playing_order(self):
-        return self.__playing_order
 
     @property
     def players_dict(self):
@@ -85,63 +82,94 @@ class Game:
         return self.__players_dict[player_id]
 
 
-    def transfer_money(self, player_id, amount):
-        """
-        Transfer money from a player to the games's pot.
-        If amount is positive then the player's wallet is decreased by the specified amount
-        and the game's pot is credited with the same amount.
-        Otherwise the money is transfered the other way round.
-        For example game.transfer_money(1, 10) transfer 10 from game's pot
-        to player's wallet with id 1.
-        And game.transfer_money(2, -20) transfer 20 from player's wallet with id 2
-        to game's pot.
-
-        Parameters
-        ----------
-        player_id : int
-            Id of the player concerned by the transfer.
-        amount : float
-            Money to transfer from game to player.
-
-        Returns
-        -------
-        None
-
-        """
-
-        if not isinstance(player_id, int):
-            raise WrongTypeError("Trying to collect money with a player_id that is not an int.")
-        if not isinstance(amount, float):
-            raise WrongTypeError("Trying to collect money with an amount of money that is not a float.")
-        if amount > self.__pot:
-            raise MoneyError("Trying to distribute more than there is in the pot")
-
-        player = self.__players_dict[player_id]
-
-        player.change_wallet(amount)
-        self.__pot -= amount
-
 
     def bet_round(self):
-        tmp_playing_order = copy.deepcopy(self.__playing_order)
-        # first_round
-        for player_id in tmp_playing_order:
-            player = self.get_player_from_id(player_id)
-            action = player.next_action
 
-            if action == 'fold':
-                pass
+        # first_r
+        first_player = self.get_player_from_id(self.__controlling_player_id)
+        controlling_player = first_player
+        next_action = controlling_player.next_action
+
+        # The very first player of the round can only check or raise
+        if next_action == "raise":
+            self.__target_bet += self.small_blind
+            first_player.current_bet = self.__target_bet
+        elif next_action == "check":
+            pass
+        else:
+            raise PokerError("The first player of the round cannot do something else than checking or raising")
+
+        # If the next players are not playing anymore then go to next Player
+        current_player = first_player.next_player
+        while current_player.playing_flag == False:
+            current_player = current_player.next_player
+
+        while current_player != controlling_player:
+            next_action = current_player.next_action
+
+            if next_action == "check":
+                if self.__target_bet > current_player.current_bet:
+                    raise PokerError("Player is checking whereas it should call or raise")
+
+            elif next_action == "fold":
+                current_player.playing_flag = False
+
+            elif next_action == "call":
+                player.current_bet = self.__target_bet
+
+            elif next_action == "raise":
+                self.__target_bet += self.small_blind
+                current_player.current_bet = self.__target_bet
+                controlling_player = current_player
+            else:
+                raise PokerError("No action has been identified for a Player object in a bet round.")
+
+            # If the next players are not playing anymore then go to next Player
+            current_player = current_player.next_player
+            while current_player.playing_flag == False:
+                current_player = current_player.next_player
+
+        # updating controlling player id
+        self.__controlling_player_id = controlling_player.id
+
+        # Adding bet of first Player
+        bet_sum = 0
+        bet_sum += first_player.current_bet
+        first_player.wallet -= first_player.current_bet
+        first_player.current_bet = 0
 
 
+        # Checking if first Player is still playing
+        nb_players_in_game = 0
+        if first_player.playing_flag == True:
+            nb_players_in_game += 1
 
+        current_player = first_player.next_player
+
+        while current_player != first_player:
+            bet_sum += current_player.current_bet
+            current_player.wallet -= current_player.current_bet
+            current_player.current_bet = 0
+            current_player = current_player.next_player
+
+            if current_player.playing_flag == True:
+                nb_players_in_game += 1
+
+        self.__pot += bet_sum
+
+        if nb_players_in_game < 2:
+            self.__winner_ids = [self.__controlling_player_id]
+            self.terminate()
 
 
     def collect_blinds(self):
         if self.__state != "start":
             raise PokerError("Trying to get blinds in a game that is not in start state")
 
-        self.transfer_money(self.__small_blind_player_id, (-1) * self.__small_blind)
-        self.transfer_money(self.__big_blind_player_id, (-1) * self.__big_blind)
+        self.get_player_from_id(self.__small_blind_player_id).wallet -= self.__small_blind
+        self.get_player_from_id(self.__big_blind_player_id).wallet -= self.__big_blind
+
+        self.__pot += self.__small_blind + self.__big_blind
 
         self.__state = "blinds-collected"
 
@@ -156,6 +184,9 @@ class Game:
             hand.receive_cards()
             player.receive_hand(hand)
 
+        self.bet_round()
+
+
         self.__state = "pre-flop"
 
 
@@ -164,6 +195,9 @@ class Game:
             raise PokerError("Trying to distribute flop in a game that is not in pre-flop state")
 
         self.__board.flop()
+
+        self.bet_round()
+
         self.__state = "pre-turn"
 
 
@@ -172,3 +206,43 @@ class Game:
             raise PokerError("Trying to distribute turn in a game that is not in pre-turn state")
 
         self.__board.turn()
+
+        self.bet_round()
+
+        self.__state = "pre-river"
+
+
+    def river(self):
+        if self.__state != "pre-river":
+            raise PokerError("Trying to distribute river in a game that is not in pre-river state")
+
+        self.__board.river()
+
+        self.bet_round()
+
+        if self.__state != "finished":
+            referee = Referee(self.__players_dict, self.__board)
+            self.__winner_ids = referee.winner_ids
+            self.terminate()
+
+
+    def terminate():
+
+        # Distribute pot to winners
+        award = self.__pot / len(self.__winner_ids)
+        for winner_id in self.__winner_ids:
+            player = self.get_player_from_id(winner_id)
+            player.wallet += award
+        self.__pot = 0.
+
+
+        # Reset board and dealer
+        self.__dealer.reset()
+        self.__board.reset()
+
+        self.__state = "finished"
+
+        self.__small_blind_player_id = self.get_player_from_id(self.__small_blind_player_id).next_player.id
+        self.__big_blind_player_id = self.get_player_from_id(self.__small_blind_player_id).next_player.id
+        self.__controlling_player_id = self.__big_blind_player_id
+        self.__target_bet = 0.

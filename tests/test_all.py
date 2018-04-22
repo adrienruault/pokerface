@@ -61,7 +61,7 @@ def test_can_identify_ranks_accurately():
         board.river()
 
         showdown = Showdown(hand, board)
-        frequencies[showdown.get_rank()-1] += 1
+        frequencies[showdown.rank-1] += 1
 
         hand.reset_cards()
         board.reset()

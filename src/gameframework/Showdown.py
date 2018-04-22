@@ -220,9 +220,18 @@ class Showdown:
 
         return 1, value_array[-5:][::-1]
 
-
-    def get_rank(self):
+    @property
+    def rank(self):
         return self.__rank
 
-    def get_kickers(self):
+    @property
+    def kickers(self):
         return self.__kickers
+
+    @property
+    def rank_array(self):
+        """
+        The first element of the rank array is the rank of the showdown.
+        The following elements are the kickers.
+        """
+        return self.__rank_array
