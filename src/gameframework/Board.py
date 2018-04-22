@@ -44,6 +44,19 @@ class Board:
     def __repr__(self):
         return self.__cards.__repr__()
 
+    def __eq__(self, other):
+        if (type(other) is not Board):
+            raise WrongTypeError('Trying to check equality of a Board with an object that is not a Board')
+
+        for i in range(5):
+            if self.__cards[i] != other.cards[i]:
+                return False
+
+            if self.__stage != other.stage:
+                return False
+
+            return True
+        
     def reset(self):
         self.__cards = [None, None, None, None, None]
         self.__stage = 0
