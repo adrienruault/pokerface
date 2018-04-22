@@ -1,6 +1,8 @@
 
 
 import copy
+import numpy as np
+from .Showdown import Showdown
 
 
 
@@ -15,7 +17,8 @@ class Referee:
         # rank_array to the rank_matrix that will be used in the get_winner method
         rank_matrix = np.zeros((len(players_dict), 6))
         nb_players_in_game = 0
-        for i, player in enumerate(players_dict.items()):
+        players_list = list(players_dict.values())
+        for i, player in enumerate(players_list):
             if player.playing_flag == True:
                 showdown = Showdown(player.hand, board)
                 rank_matrix[i, :] = showdown.rank_array
@@ -24,18 +27,18 @@ class Referee:
         players_id_list = list(players_dict.keys())
 
         # Best Player identification
-        in_course_idx = range(rank_matrix.shape[0])
+        in_course_idx = np.arange(0, rank_matrix.shape[0], dtype=int)
         winner_found = False
         i = 0
         while winner_found == False and i < 6:
-            max_value = np.max(rank_matrix[in_course_players_idx, i])
-            in_course_idx = np.where(rank_matrix[in_course_idx, i] == max_value)
+            max_value = np.max(rank_matrix[in_course_idx, i])
+            in_course_idx = np.where(rank_matrix[in_course_idx, i] == max_value)[0]
 
             if len(in_course_idx) == 1:
                 winner_found = True
             i+=1
 
-        self.__winner_ids = players_id_list[in_course_idx]
+        self.__winner_ids = [players_id_list[i] for i in in_course_idx]
 
 
     @property

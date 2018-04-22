@@ -4,7 +4,7 @@ from gameframework import *
 import pdb
 
 
-def initialize():
+def initialize_check_players():
     players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
     for player in players_list:
         player.next_action = "check"
@@ -57,7 +57,7 @@ def test_init_game_contains_more_than_2_players():
 
 
 def test_distribute_hands():
-    game = initialize()
+    game = initialize_check_players()
 
     game.collect_blinds()
 
@@ -73,7 +73,7 @@ def test_distribute_hands():
 
 
 def test_flop():
-    game = initialize()
+    game = initialize_check_players()
 
     with pytest.raises(PokerError):
         game.flop()
@@ -90,14 +90,40 @@ def test_flop():
 
 
 def test_turn():
-    game = initialize()
+    game = initialize_check_players()
 
     with pytest.raises(PokerError):
         game.turn()
 
+    game.collect_blinds()
+    game.distribute_hands()
+    game.flop()
+    game.turn()
+
+    assert len(game.dealer.drawn_cards) == 10
+
+    with pytest.raises(PokerError):
+        game.turn()
+
+def test_river():
+    game = initialize_check_players()
+
+    with pytest.raises(PokerError):
+        game.river()
+
+    game.collect_blinds()
+    game.distribute_hands()
+    game.flop()
+    game.turn()
+    game.river()
+
+    assert len(game.dealer.drawn_cards) == 11
+
+
+
 
 def test_collect_blinds():
-    game = initialize()
+    game = initialize_check_players()
 
     game.collect_blinds()
 
@@ -114,3 +140,12 @@ def test_collect_blinds():
 
     with pytest.raises(PokerError):
         game.collect_blinds()
+
+
+
+
+def test_entire_checking_game():
+
+    players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+
+    #game = Game()

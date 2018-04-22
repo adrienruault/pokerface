@@ -5,6 +5,7 @@ from .Board import Board
 from .Hand import Hand
 from .Player import Player
 from .Error import *
+from .Referee import Referee
 import copy
 
 class Game:
@@ -226,7 +227,7 @@ class Game:
             self.terminate()
 
 
-    def terminate():
+    def terminate(self):
 
         # Distribute pot to winners
         award = self.__pot / len(self.__winner_ids)
@@ -235,12 +236,14 @@ class Game:
             player.wallet += award
         self.__pot = 0.
 
+        self.__state = "finished"
 
+
+    def restart(self):
         # Reset board and dealer
         self.__dealer.reset()
         self.__board.reset()
 
-        self.__state = "finished"
 
         self.__small_blind_player_id = self.get_player_from_id(self.__small_blind_player_id).next_player.id
         self.__big_blind_player_id = self.get_player_from_id(self.__small_blind_player_id).next_player.id
