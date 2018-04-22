@@ -78,6 +78,10 @@ class Game:
     def pot(self):
         return self.__pot
 
+    @property
+    def target_bet(self):
+        return self.__target_bet
+
 
     def get_player_from_id(self, player_id):
         return self.__players_dict[player_id]
@@ -116,7 +120,7 @@ class Game:
                 current_player.playing_flag = False
 
             elif next_action == "call":
-                player.current_bet = self.__target_bet
+                current_player.current_bet = self.__target_bet
 
             elif next_action == "raise":
                 self.__target_bet += self.small_blind

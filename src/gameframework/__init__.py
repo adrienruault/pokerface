@@ -2,6 +2,7 @@
 
 
 import os
+import numpy as np
 
 from .Board import Board
 from .Card import Card

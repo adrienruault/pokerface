@@ -13,6 +13,8 @@ class Player():
             raise WrongTypeError("The Player id that you provided is not an int.")
         if not isinstance(wallet, float):
             raise WrongTypeError("The Player's wallet that you provided is not a float")
+        if wallet < 0:
+            raise PokerError("Trying to create a Player object with negative wallet.")
 
         self.__id = id_
         self.__wallet = wallet
@@ -50,6 +52,8 @@ class Player():
 
     @wallet.setter
     def wallet(self, new_wallet):
+        if not isinstance(new_wallet, float):
+            raise WrongTypeError("The Player's wallet that you provided is not a float")
         if new_wallet < 0:
             raise PokerError("Trying to set a negative player's wallet.")
         self.__wallet = new_wallet

@@ -150,9 +150,24 @@ def test_collect_blinds():
 
 
 
-
 def test_full_game_with_checking_players():
 
     players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+    players_list[0].next_action = "call"
+    players_list[1].next_action = "raise"
+    players_list[2].next_action = "fold"
 
-    #game = Game()
+    game = Game(players_list)
+
+    game.collect_blinds()
+    game.distribute_hands()
+    game.flop()
+    game.turn()
+    game.river()
+
+    assert game.state == "finished"
+    assert abs(game.pot) < 1e-8
+    assert game.target_bet > 0
+    assert len(game.dealer.drawn_cards) == 11
+
+    game.restart()
