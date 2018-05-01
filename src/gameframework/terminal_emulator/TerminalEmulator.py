@@ -11,7 +11,9 @@ class TerminalEmulator:
         self.welcome_message()
         self.create_game()
         print(self.__game)
-        while 1:
+
+        continue_flag = True
+        while continue_flag:
             print("\n\n----- Collecting blinds -----\n\n")
             self.__game.collect_blinds()
             print(self.__game)
@@ -20,21 +22,36 @@ class TerminalEmulator:
             self.__game.distribute_hands()
             print(self.__game)
 
-            print("\n\n----- Distributing flop -----\n\n")
-            self.__game.flop()
-            print(self.__game)
+            if self.__game.state != "finished":
+                print("\n\n----- Distributing flop -----\n\n")
+                self.__game.flop()
+                print(self.__game)
 
-            print("\n\n----- Distributing turn -----\n\n")
-            self.__game.turn()
-            print(self.__game)
+            if self.__game.state != "finished":
+                print("\n\n----- Distributing turn -----\n\n")
+                self.__game.turn()
+                print(self.__game)
 
-            print("\n\n----- Distributing river -----\n\n")
-            self.__game.river()
-            print(self.__game)
+            if self.__game.state != "finished":
+                print("\n\n----- Distributing river -----\n\n")
+                self.__game.river()
+                print(self.__game)
 
-            print("\n\n----- Game restarting -----\n\n")
-            self.__game.restart()
-            print(self.__game)
+            print("\n\n----- Game finished -----\n\n")
+
+            continue_answer = input("Do you wanna play another game? (yes/no): \n> ")
+            while continue_answer != "yes" and continue_answer != "no":
+                print("Please answer by yes or no")
+                continue_answer = input("Do you wanna play another game? (yes/no): \n> ")
+
+            if continue_answer == "no":
+                continue_flag = False
+            else:
+                print("\n\n----- Game restarting -----\n\n")
+                self.__game.restart()
+                print(self.__game)
+
+        print("\n\n----- Game exiting -----\n\n")
 
 
     def welcome_message(self):
