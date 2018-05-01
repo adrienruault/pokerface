@@ -9,8 +9,8 @@ class Player():
     ACTIONS = ['check', 'fold', 'call', 'raise']
 
     def __init__(self, id_, wallet):
-        if not isinstance(id_, int):
-            raise WrongTypeError("The Player id that you provided is not an int.")
+        if not isinstance(id_, str):
+            raise WrongTypeError("The Player's id must be a string.")
         if not isinstance(wallet, float):
             raise WrongTypeError("The Player's wallet that you provided is not a float")
         if wallet < 0:
@@ -29,18 +29,27 @@ class Player():
 
 
     def receive_hand(self, hand):
+        if not isinstance(hand, Hand):
+            raise WrongTypeError("Trying to give something else than a Hand object to a Player with the receive_hand method")
         self.__hand = hand
 
 
     def __eq__(self, other):
-        if (type(other) is not Player):
+        if not isinstance(other, Player):
             raise WrongTypeError('Trying to check equality of a Player with an object that is not a Player.')
 
         return (other.id == self.__id)
 
 
     def __repr__(self):
-        return "{id: " + str(self.__id) + ' | Hand: ' + self.__hand.__repr__() + "}"
+        to_print = "{player: " + str(self.__id) + " | wallet: " + str(self.__wallet) + "}\n"
+        to_print += "\tHand: " + self.__hand.__repr__() + " | current bet: " + str(self.__current_bet) + "\n"
+        if self.__playing_flag:
+            playing_status = "playing"
+        else:
+            playing_status = "fold"
+        to_print += "\tstatus: " + playing_status
+        return to_print
 
     @property
     def id(self):
@@ -85,6 +94,8 @@ class Player():
 
     @playing_flag.setter
     def playing_flag(self, new_playing_flag):
+        if not isinstance(new_playing_flag, bool):
+            raise WrongTypeError("Trying to assign a playing flag that is not a boolean to a Player object.")
         self.__playing_flag = new_playing_flag
 
 
@@ -97,6 +108,20 @@ class Player():
         if new_action not in self.ACTIONS:
             raise PokerError("Trying to assign an action to a Player object that is not allowed ")
         self.__next_action = new_action
+
+
+
+    def ask_action(self, game):
+        """
+        This is maybe the most important action of the program since it is the method that encapsulates the whole
+        policy of a player.
+        In the standard case: that is for the base case it returns the exact same as a getter.
+        """
+        return self.next_action
+
+
+
+
 
 
     @property

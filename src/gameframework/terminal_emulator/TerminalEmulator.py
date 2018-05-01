@@ -1,0 +1,73 @@
+from gameframework import *
+from .TerminalPlayer import TerminalPlayer
+
+class TerminalEmulator:
+
+    def __init__(self):
+        pass
+
+    def launch(self):
+
+        self.welcome_message()
+        self.create_game()
+        print(self.__game)
+        while 1:
+            print("\n\n----- Collecting blinds -----\n\n")
+            self.__game.collect_blinds()
+            print(self.__game)
+
+            print("\n\n----- Distributing hands -----\n\n")
+            self.__game.distribute_hands()
+            print(self.__game)
+
+            print("\n\n----- Distributing flop -----\n\n")
+            self.__game.flop()
+            print(self.__game)
+
+            print("\n\n----- Distributing turn -----\n\n")
+            self.__game.turn()
+            print(self.__game)
+
+            print("\n\n----- Distributing river -----\n\n")
+            self.__game.river()
+            print(self.__game)
+
+            print("\n\n----- Game restarting -----\n\n")
+            self.__game.restart()
+            print(self.__game)
+
+
+    def welcome_message(self):
+        print("Welcome to the pokerface emulator.")
+        print("Follow the instructions to play through the terminal.")
+        print("A GUI is in development.")
+        print("You can see the project at https://github.com/adrienruault/pokerface.")
+        print()
+
+    def create_player(self):
+        id_ = input("\tid: ")
+        wallet = float(input("\twallet: "))
+        return TerminalPlayer(id_, wallet)
+
+    def create_game(self):
+        print("How many players are taking part?")
+        nb_players = int(input("Please provide the number of players (can range from 2 to 8): "))
+
+        while nb_players > 8 and nb_players < 2:
+            print("The number of players is not valid.")
+            nb_players = int(input("Please provide the number of players which can range from 2 to 8:\n"))
+
+
+        players_list = []
+        for i in range(nb_players):
+            print("\nCreation of player " + str(i + 1) + ":")
+            player = self.create_player()
+            players_list += [player]
+
+        self.__game = Game(players_list)
+
+        print("\n\n----- Game created -----\n\n")
+
+
+    def trigger_new_game(self):
+        pass
