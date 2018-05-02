@@ -37,6 +37,9 @@ class TerminalEmulator:
                 self.__game.river()
                 print(self.__game)
 
+            print()
+            print("Winners: ", self.__game.winner_ids)
+
             print("\n\n----- Game finished -----\n\n")
 
             continue_answer = input("Do you wanna play another game? (yes/no): \n> ")

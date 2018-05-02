@@ -19,7 +19,7 @@ class Player():
         self.__id = id_
         self.__wallet = wallet
         self.__hand = None
-        self.__next_action = None
+        self._next_action = None
 
         self.__next_player = None
         self.__prev_player = None
@@ -101,13 +101,13 @@ class Player():
 
     @property
     def next_action(self):
-        return self.__next_action
+        return self._next_action
 
     @next_action.setter
     def next_action(self, new_action):
         if new_action not in self.ACTIONS:
             raise PokerError("Trying to assign an action to a Player object that is not allowed ")
-        self.__next_action = new_action
+        self._next_action = new_action
 
 
 
