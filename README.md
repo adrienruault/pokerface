@@ -5,6 +5,14 @@
 The idea of this project is to use reinforcement learning to create an AI able to play poker.
 
 
+## Requirements
+
+The software runs with python3 and the following python packages are needed:
+
+- numpy
+
+
+
 ## gameframework
 
 `gameframework` is a package that allows to emulate poker games.
@@ -14,7 +22,7 @@ Here is an example of how to run a simple game programmatically:
 ```python
 def main():
     # Definition of all the players
-    players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+    players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     
     # Instantiation of the game
     game = Game(players_list)
@@ -40,6 +48,10 @@ A terminal emulator to play poker on terminal has been developed that you can us
 ```python
 python try_terminal_emulator.py
 ```
+
+The emulator haven't been fully tested yet and might be a little buggy but you should be able to play some games against yourself.
+
+
 
 ## Tests
 
