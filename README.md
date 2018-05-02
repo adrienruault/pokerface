@@ -30,6 +30,6 @@ At each step of the game, the the `Player.next_action()` method is called to kno
 
 ## Tests
 
-**run the tests**: run the command `pytest`. It automatically finds files starting with "test_" and run them.
+**Run the tests**: run the command `pytest`. It automatically finds files starting with "test_" and run them.
 
 **Get line coverage**: run the command `pytest --cov=gameframework .`. It is the same as running `pytest` but also computes the line coverage in `gameframework`
