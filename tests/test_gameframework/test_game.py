@@ -5,7 +5,7 @@ import pdb
 
 
 def initialize_check_players():
-    players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+    players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     for player in players_list:
         player.next_action = "check"
     game = Game(players_list)
@@ -22,7 +22,7 @@ def test_properties():
 
 def test_init_players_are_well_added():
 
-    players_list1 = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+    players_list1 = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     game1 = Game(players_list1)
 
     # Check that the players are well added
@@ -34,17 +34,17 @@ def test_init_players_are_well_added():
 
 def test_init_players_have_unique_id():
     # Check that cannot have two players with same id
-    players_list2 = [Player(1, 1000.), Player(1, 1000.)]
+    players_list2 = [Player("a", 1000.), Player("a", 1000.)]
     with pytest.raises(PokerError):
         game2 = Game(players_list2)
 
 
 def test_init_players_are_doubly_linked_listed():
     # Check the good working of the doubly linked list
-    players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+    players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     game = Game(players_list)
 
-    player = game.get_player_from_id(1)
+    player = game.get_player_from_id("a")
     player_next1 = player.next_player
     player_next2 = player_next1.next_player
 
@@ -59,7 +59,7 @@ def test_init_players_are_doubly_linked_listed():
 def test_init_game_contains_more_than_2_players():
     # Check that we cannot create a game with only one Player
     with pytest.raises(PokerError):
-        game3 = Game([Player(1, 1000.)])
+        game3 = Game([Player("a", 1000.)])
 
 
 
@@ -134,13 +134,13 @@ def test_collect_blinds():
 
     game.collect_blinds()
 
-    player1 = game.get_player_from_id(1)
+    player1 = game.get_player_from_id("a")
     assert abs(player1.wallet - (1000 - game.small_blind)) < 1e-8
 
-    player2 = game.get_player_from_id(2)
+    player2 = game.get_player_from_id("b")
     assert abs(player2.wallet - (1000 - game.big_blind)) < 1e-8
 
-    player3 = game.get_player_from_id(3)
+    player3 = game.get_player_from_id("c")
     assert abs(player3.wallet - 1000) < 1e-8
 
     assert abs(game.pot - (game.small_blind + game.big_blind)) < 1e-8
@@ -152,7 +152,7 @@ def test_collect_blinds():
 
 def test_full_game_with_checking_players():
 
-    players_list = [Player(1, 1000.), Player(2, 1000.), Player(3, 1000.)]
+    players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     players_list[0].next_action = "call"
     players_list[1].next_action = "raise"
     players_list[2].next_action = "fold"
