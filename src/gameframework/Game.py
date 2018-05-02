@@ -85,6 +85,10 @@ class Game:
     def target_bet(self):
         return self.__target_bet
 
+    @property
+    def winner_ids(self):
+        return self.__winner_ids
+
 
     def get_player_from_id(self, player_id):
         return self.__players_dict[player_id]
