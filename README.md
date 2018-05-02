@@ -2,9 +2,14 @@
 [![Coverage Status](https://coveralls.io/repos/github/adrienruault/pokerface/badge.svg?branch=master)](https://coveralls.io/github/adrienruault/pokerface?branch=master)
 # pokerface
 
-`gameframework` is a package that emulates poker games.
+The idea of this project is to use reinforcement learning to create an AI able to play poker.
 
-Here is an example of how to run a game:
+
+## gameframework
+
+`gameframework` is a package that allows to emulate poker games.
+
+Here is an example of how to run a simple game programmatically:
 
 ```python
 def main():
@@ -25,8 +30,16 @@ def main():
     game.restart()
 ```
 
-At each step of the game, the the `Player.next_action()` method is called to know the policy of each player when they have to take a decision. Finding a good policy to be coded in this method is all the point of this project.
+At each step of the game, the the `Player.next_action()` method is called to know the policy of each player when they have to take a decision. Finding a good policy to be encapsulated in this method is all the point of this project.
 
+
+## Terminal emulator
+
+A terminal emulator to play poker on terminal has been developed that you can use by running `try_terminal_emulator.py`. From the parent directory you can run:
+
+```python
+python try_terminal_emulator.py
+```
 
 ## Tests
 
