@@ -72,3 +72,15 @@ def test_reset():
     assert board.cards[4] == None
     assert board.stage == 0
     assert board.dealer == dealer
+
+
+def test__eq__():
+    dealer = Dealer([])
+    board1 = Board(dealer)
+    board2 = Board(dealer)
+
+    assert board1 == board2
+
+    board2.flop()
+
+    assert board1 != board2

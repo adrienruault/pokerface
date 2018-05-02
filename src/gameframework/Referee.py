@@ -1,6 +1,8 @@
 
 
 import copy
+import numpy as np
+from .Showdown import Showdown
 
 
 
@@ -8,42 +10,37 @@ class Referee:
 
 
     def __init__(self, players_dict, board):
-
-        self.__players_dict = copy.deepcopy(players_dict)
-        self.__board = board
-
-
-
-
-    def get_winner(self):
-        if self.__board.stage != 3:
+        if board.stage != 3:
             raise PokerError("Trying to get the winner of a Table with a Board object that haven't passed river")
 
-        rank_matrix = np.zeros((len(self.__players_dict), 6))
+        # Creating Showdown objects for each (player, board) pair and appending their
+        # rank_array to the rank_matrix that will be used in the get_winner method
+        rank_matrix = np.zeros((len(players_dict), 6))
+        nb_players_in_game = 0
+        players_list = list(players_dict.values())
+        for i, player in enumerate(players_list):
+            if player.playing_flag == True:
+                showdown = Showdown(player.hand, board)
+                rank_matrix[i, :] = showdown.rank_array
+                nb_players_in_game += 1
 
-        for i, player in enumerate(self.__players_dict):
-            if type(player) is not Player:
-                raise WrongTypeError('Trying to construct a Referee object with a list that does not contain only players')
+        players_id_list = list(players_dict.keys())
 
-            # Construct the showdown related to the current player and add it to
-            # the list of showdowns
-            showdown = Showdown(player.get_hand(), self.__board)
-            rank_matrix[i, 0] = showdown.get_rank()
-            rank_matrix[i, 1:] = showdown.get_kickers()
-
-        # Now I need to identify the best Player
-        winner_found = True
+        # Best Player identification
+        in_course_idx = np.arange(0, rank_matrix.shape[0], dtype=int)
+        winner_found = False
         i = 0
         while winner_found == False and i < 6:
-            max_value = np.max(rank_matrix[:, i])
-            best_players = np.where(rank_matrix[:,i] == max_value)
+            max_value = np.max(rank_matrix[in_course_idx, i])
+            in_course_idx = np.where(rank_matrix[in_course_idx, i] == max_value)[0]
 
-            # We restrict the rank_matrix to the set of still potential winners
-            rank_matrix = rank_matrix[best_players,:]
-            if len(best_players) == 1:
+            if len(in_course_idx) == 1:
                 winner_found = True
             i+=1
 
-        self.__last_winner_id = best_players
+        self.__winner_ids = [players_id_list[i] for i in in_course_idx]
 
-        return best_players
+
+    @property
+    def winner_ids(self):
+        return self.__winner_ids
