@@ -3,11 +3,7 @@ from .TerminalPlayer import TerminalPlayer
 
 class TerminalEmulator:
 
-    def __init__(self):
-        pass
-
     def launch(self):
-
         self.welcome_message()
         self.create_game()
         print(self.__game)
@@ -104,7 +100,3 @@ class TerminalEmulator:
         self.__game = Game(players_list)
 
         print("\n\n----- Game created -----\n\n")
-
-
-    def trigger_new_game(self):
-        pass

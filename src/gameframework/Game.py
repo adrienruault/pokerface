@@ -45,8 +45,10 @@ class Game:
         self.__dealer =  Dealer([])
         self.__board = Board(self.__dealer)
         self.__state = "start"
-        self.__small_blind = 1.
-        self.__big_blind = 2 * self.__small_blind
+        self.__low_stake = 1.
+        self.__high_stake = 2 * self.__low_stake
+        self.__small_blind = 0.5 * self.__low_stake
+        self.__big_blind = self.__low_stake
         self.__small_blind_player_id = players_id_list[0]
         self.__big_blind_player_id = self.get_player_from_id(self.__small_blind_player_id).next_player.id
         self.__controlling_player_id = self.__big_blind_player_id
