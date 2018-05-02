@@ -41,7 +41,7 @@ def main():
 At each step of the game, the the `Player.next_action()` method is called to know the policy of each player when they have to take a decision. Finding a good policy to be encapsulated in this method is all the point of this project.
 
 
-## Terminal emulator
+### Terminal emulator
 
 A terminal emulator to play poker on terminal has been developed that you can use by running `try_terminal_emulator.py`. From the parent directory you can run:
 
@@ -59,3 +59,9 @@ The emulator haven't been fully tested yet and might be a little buggy but you s
 **Run the tests**: run the command `pytest`. It automatically finds files starting with "test_" and run them.
 
 **Get line coverage**: run the command `pytest --cov=gameframework .`. It is the same as running `pytest` but also computes the line coverage in `gameframework`
+
+
+
+## Credits
+
+- Template for the TensorFlow models: https://github.com/MrGemy95/Tensorflow-Project-Template
