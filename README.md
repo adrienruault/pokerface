@@ -46,7 +46,8 @@ At each step of the game, the the `Player.next_action()` method is called to kno
 A terminal emulator to play poker on terminal has been developed that you can use by running `try_terminal_emulator.py`. From the parent directory you can run:
 
 ```python
-python try_terminal_emulator.py
+# From parent directory
+python src/try_terminal_emulator.py
 ```
 
 The emulator haven't been fully tested yet and might be a little buggy but you should be able to play some games against yourself.
