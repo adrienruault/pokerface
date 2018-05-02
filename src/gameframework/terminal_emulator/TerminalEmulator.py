@@ -66,16 +66,33 @@ class TerminalEmulator:
 
     def create_player(self):
         id_ = input("\tid: ")
-        wallet = float(input("\twallet: "))
+        while id_ == '' or len(id_) > 12:
+            print("Please provide an id with no more then 12 characters:")
+            id_ = input("\tid: ")
+
+        conversion_failed = False
+        try:
+            wallet = float(input("\twallet: "))
+        except Exception:
+            conversion_failed = True
+
+        while conversion_failed or wallet < 0:
+            print("Please provide a positive number for wallet")
+            conversion_failed = False
+            try:
+                wallet = float(input("\twallet: "))
+            except Exception:
+                conversion_failed = True
+
         return TerminalPlayer(id_, wallet)
 
     def create_game(self):
         print("How many players are taking part?")
         nb_players = int(input("Please provide the number of players (can range from 2 to 8): "))
 
-        while nb_players > 8 and nb_players < 2:
+        while nb_players > 8 or nb_players < 2:
             print("The number of players is not valid.")
-            nb_players = int(input("Please provide the number of players which can range from 2 to 8:\n"))
+            nb_players = int(input("Please provide the number of players which can range from 2 to 8: "))
 
 
         players_list = []

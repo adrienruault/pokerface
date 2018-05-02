@@ -29,7 +29,6 @@ class TerminalPlayer(Player):
             raise WrongTypeError("You have to provide a Game object when calling the Player's ask action method.")
         print(self)
         next_action = input("Choose an action: ")
-        print("next_action:", next_action)
         while next_action not in self.ACTIONS:
             print("Please choose one of the following actions: 'check', 'fold', 'call' or 'raise'")
             next_action = input("Choose an action: ")
