@@ -19,7 +19,7 @@ The software runs with python3 and the following python packages are needed:
 
 Here is an example of how to run a simple game programmatically:
 
-```python
+```bash
 def main():
     # Definition of all the players
     players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
