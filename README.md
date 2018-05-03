@@ -19,7 +19,7 @@ The software runs with python3 and the following python packages are needed:
 
 Here is an example of how to run a simple game programmatically:
 
-```bash
+```python
 def main():
     # Definition of all the players
     players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
@@ -45,7 +45,7 @@ At each step of the game, the the `Player.next_action()` method is called to kno
 
 A terminal emulator to play poker on terminal has been developed that you can use by running `try_terminal_emulator.py`. From the parent directory you can run:
 
-```python
+```bash
 # From parent directory
 python src/try_terminal_emulator.py
 ```
