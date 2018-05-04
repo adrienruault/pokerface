@@ -33,5 +33,6 @@ class TerminalPlayer(Player):
             print("Please choose one of the following actions: 'check', 'fold', 'call' or 'raise'")
             next_action = input("Choose an action: ")
 
+        print()
         self._next_action = next_action
         return next_action

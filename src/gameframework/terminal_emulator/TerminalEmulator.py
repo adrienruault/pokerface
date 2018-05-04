@@ -14,31 +14,31 @@ class TerminalEmulator:
             game_master.collect_blinds()
             print(game_master)
 
-            print("\n\n----- Distributing hands -----\n\n")
+            print("\n\n----- Hands -----\n\n")
             game_master.distribute_hands()
             print(game_master)
-
             game_master.bet_round()
+            print(game_master)
 
-            print("\n\n----- Distributing flop -----\n\n")
+            print("\n\n----- Flop -----\n\n")
             game_master.flop()
             print(game_master)
-
             game_master.bet_round()
+            print(game_master)
 
-            print("\n\n----- Distributing turn -----\n\n")
+            print("\n\n----- Turn -----\n\n")
             game_master.turn()
             print(game_master)
-
             game_master.bet_round()
-
-            print("\n\n----- Distributing river -----\n\n")
-            game_master.river()
             print(game_master)
 
+            print("\n\n----- River -----\n\n")
+            game_master.river()
+            print(game_master)
             game_master.bet_round()
+            print(game_master)
 
-            print("\n\n----- Dealer finished -----\n\n")
+            print("\n\n----- Game finished -----\n\n")
 
             continue_answer = input("Do you wanna play another dealer? (yes/no): \n> ")
             while continue_answer != "yes" and continue_answer != "no":
