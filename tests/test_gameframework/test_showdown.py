@@ -19,9 +19,9 @@ def test_can_identify_ranks_accurately():
 
     expected = [0.174, 0.438, 0.235, 0.0483, 0.0462, 0.0303, 0.0260, 0.00168, 0.0000311]
 
-    dealer = Dealer([])
-    hand = Hand(dealer)
-    board = Board(dealer)
+    card_pack = CardPack([])
+    hand = Hand(card_pack)
+    board = Board(card_pack)
 
     frequencies = np.zeros(9, dtype=int)
 
@@ -36,9 +36,9 @@ def test_can_identify_ranks_accurately():
         showdown = Showdown(hand, board)
         frequencies[showdown.rank-1] += 1
 
-        hand.reset_cards()
+        hand.reset()
         board.reset()
-        dealer.reset()
+        card_pack.reset()
 
         if (i % (nb_draws / 10)) == 0:
             print(str(i * 100 / nb_draws) + "%" )

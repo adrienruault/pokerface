@@ -5,26 +5,26 @@ from gameframework import *
 
 
 def initialize():
-    dealer = Dealer([])
-    return Hand(dealer), dealer
+    card_pack = CardPack([])
+    return Hand(card_pack), card_pack
 
 
 def test_init():
-    hand, dealer = initialize()
+    hand, card_pack = initialize()
 
     assert isinstance(hand, Hand)
-    assert hand.dealer == dealer
+    assert hand.card_pack == card_pack
 
 
-def test_reset_cards():
-    hand, dealer = initialize()
+def test_reset():
+    hand, card_pack = initialize()
 
-    assert len(dealer.drawn_cards) == 0
+    assert len(card_pack.drawn_cards) == 0
 
     hand.receive_cards()
 
-    assert len(dealer.drawn_cards) == 2
+    assert len(card_pack.drawn_cards) == 2
 
 def test__repr__():
-    hand, dealer = initialize()    
+    hand, card_pack = initialize()
     hand.__repr__()

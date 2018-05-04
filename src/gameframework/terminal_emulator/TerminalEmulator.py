@@ -5,52 +5,54 @@ class TerminalEmulator:
 
     def launch(self):
         self.welcome_message()
-        self.create_game()
-        print(self.__game)
+        game_master = self.create_game_master()
+        print(game_master)
 
         continue_flag = True
         while continue_flag:
             print("\n\n----- Collecting blinds -----\n\n")
-            self.__game.collect_blinds()
-            print(self.__game)
+            game_master.collect_blinds()
+            print(game_master)
 
             print("\n\n----- Distributing hands -----\n\n")
-            self.__game.distribute_hands()
-            print(self.__game)
+            game_master.distribute_hands()
+            print(game_master)
 
-            if self.__game.state != "finished":
-                print("\n\n----- Distributing flop -----\n\n")
-                self.__game.flop()
-                print(self.__game)
+            game_master.bet_round()
 
-            if self.__game.state != "finished":
-                print("\n\n----- Distributing turn -----\n\n")
-                self.__game.turn()
-                print(self.__game)
+            print("\n\n----- Distributing flop -----\n\n")
+            game_master.flop()
+            print(game_master)
 
-            if self.__game.state != "finished":
-                print("\n\n----- Distributing river -----\n\n")
-                self.__game.river()
-                print(self.__game)
+            game_master.bet_round()
 
-            print()
-            print("Winners: ", self.__game.winner_ids)
+            print("\n\n----- Distributing turn -----\n\n")
+            game_master.turn()
+            print(game_master)
 
-            print("\n\n----- Game finished -----\n\n")
+            game_master.bet_round()
 
-            continue_answer = input("Do you wanna play another game? (yes/no): \n> ")
+            print("\n\n----- Distributing river -----\n\n")
+            game_master.river()
+            print(game_master)
+
+            game_master.bet_round()
+
+            print("\n\n----- Dealer finished -----\n\n")
+
+            continue_answer = input("Do you wanna play another dealer? (yes/no): \n> ")
             while continue_answer != "yes" and continue_answer != "no":
                 print("Please answer by yes or no")
-                continue_answer = input("Do you wanna play another game? (yes/no): \n> ")
+                continue_answer = input("Do you wanna play another dealer? (yes/no): \n> ")
 
             if continue_answer == "no":
                 continue_flag = False
             else:
-                print("\n\n----- Game restarting -----\n\n")
-                self.__game.restart()
-                print(self.__game)
+                print("\n\n----- Dealer restarting -----\n\n")
+                game_master.restart()
+                print(game_master)
 
-        print("\n\n----- Game exiting -----\n\n")
+        print("\n\n----- Dealer exiting -----\n\n")
 
 
     def welcome_message(self):
@@ -82,7 +84,7 @@ class TerminalEmulator:
 
         return TerminalPlayer(id_, wallet)
 
-    def create_game(self):
+    def create_game_master(self):
         print("How many players are taking part?")
         nb_players = int(input("Please provide the number of players (can range from 2 to 8): "))
 
@@ -97,6 +99,6 @@ class TerminalEmulator:
             player = self.create_player()
             players_list += [player]
 
-        self.__game = Game(players_list)
+        return GameMaster(players_list)
 
-        print("\n\n----- Game created -----\n\n")
+        print("\n\n----- Dealer created -----\n\n")

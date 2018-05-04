@@ -7,19 +7,19 @@ from .Card import Card
 
 class Board:
 
-    def __init__(self, dealer):
+    def __init__(self, card_pack):
         self.__cards = [None, None, None, None, None]
         self.__stage = 0
-        self.__dealer = dealer
+        self.__card_pack = card_pack
 
     def flop(self):
         if self.__stage != 0:
             raise PokerError('Trying to draw a flop that is not authorized.')
 
         else:
-            self.__cards[0] = self.__dealer.draw()
-            self.__cards[1] = self.__dealer.draw()
-            self.__cards[2] = self.__dealer.draw()
+            self.__cards[0] = self.__card_pack.draw()
+            self.__cards[1] = self.__card_pack.draw()
+            self.__cards[2] = self.__card_pack.draw()
 
             self.__stage += 1;
 
@@ -28,7 +28,7 @@ class Board:
             raise PokerError('Trying to draw a turn that is not authorized.')
 
         else:
-            self.__cards[3] = self.__dealer.draw()
+            self.__cards[3] = self.__card_pack.draw()
 
             self.__stage += 1
 
@@ -37,7 +37,7 @@ class Board:
             raise PokerError('Trying to draw a river that is not authorized.')
 
         else:
-            self.__cards[4] = self.__dealer.draw()
+            self.__cards[4] = self.__card_pack.draw()
 
             self.__stage +=1
 
@@ -81,5 +81,5 @@ class Board:
 
 
     @property
-    def dealer(self):
-        return self.__dealer
+    def card_pack(self):
+        return self.__card_pack

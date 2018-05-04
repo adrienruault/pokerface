@@ -6,10 +6,11 @@ import numpy as np
 
 from .Board import Board
 from .Card import Card
-from .Dealer import Dealer
+from .CardPack import CardPack
 from .Error import WrongTypeError, PokerError, MoneyError
 from .Hand import Hand
 from .Showdown import Showdown
 from .Player import Player
-from .Game import Game
+from .Dealer import Dealer
+from .GameMaster import GameMaster
 from .terminal_emulator import TerminalEmulator, TerminalPlayer

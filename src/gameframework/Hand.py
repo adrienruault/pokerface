@@ -6,18 +6,18 @@
 
 class Hand:
 
-    def __init__(self, dealer):
+    def __init__(self, card_pack):
         self.__cards = [None, None]
-        self.__dealer = dealer
+        self.__card_pack = card_pack
 
     def __repr__(self):
         return self.__cards.__repr__()
 
-    def reset_cards(self):
+    def reset(self):
         self.__cards = [None, None]
 
     def receive_cards(self):
-        self.__cards = [self.__dealer.draw(), self.__dealer.draw()]
+        self.__cards = [self.__card_pack.draw(), self.__card_pack.draw()]
 
 
     @property
@@ -26,5 +26,5 @@ class Hand:
 
 
     @property
-    def dealer(self):
-        return self.__dealer
+    def card_pack(self):
+        return self.__card_pack
