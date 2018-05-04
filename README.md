@@ -2,6 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/adrienruault/pokerface/badge.svg?branch=master)](https://coveralls.io/github/adrienruault/pokerface?branch=master)
 # pokerface
 
+
 The idea of this project is to use reinforcement learning to create an AI able to play poker.
 
 
@@ -24,19 +25,20 @@ def main():
     # Definition of all the players
     players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     
-    # Instantiation of the game
-    game = Game(players_list)
+    # Instantiation of the dealer
+    dealer = Dealer(players_list)
     
-    # Proceedings of the game
-    game.collect_blinds()
-    game.distribute_hands()
-    game.flop()
-    game.turn()
-    game.river()
+    # Proceedings of the dealer
+    dealer.collect_blinds()
+    dealer.distribute_hands()
+    dealer.flop()
+    dealer.turn()
+    dealer.river()
     
-    # The restart method allows to start a new game with the same set of players
-    game.restart()
+    # The restart method allows to start a new dealer with the same set of players
+    dealer.restart()
 ```
+
 
 At each step of the game, the the `Player.next_action()` method is called to know the policy of each player when they have to take a decision. Finding a good policy to be encapsulated in this method is all the point of this project.
 
@@ -51,7 +53,6 @@ python src/try_terminal_emulator.py
 ```
 
 The emulator haven't been fully tested yet and might be a little buggy but you should be able to play some games against yourself.
-
 
 
 ## Tests

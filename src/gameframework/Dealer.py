@@ -1,47 +1,135 @@
 
 
-
-
-import random
-import datetime
-from .Card import Card
+from .CardPack import CardPack
+from .Board import Board
+from .Hand import Hand
+from .Player import Player
 from .Error import *
+from .Referee import Referee
+import copy
+
+class Dealer():
+
+    def __init__(self, players_list):
+
+        if len(players_list) < 2:
+            raise PokerError("Trying to instantiate a Dealer object with less than 2 players")
+
+        players_id_list = []
+        self.__players_dict = {}
+
+        for player in players_list:
+            current_id = player.id
+
+            if current_id in players_id_list:
+                raise PokerError("Trying to instantiate a Dealer object with two players having the same id")
+
+            # Adding players to the dictionary
+            new_player = copy.deepcopy(player)
+            self.__players_dict[current_id] = new_player
+            players_id_list += [current_id]
 
 
-class Dealer:
-
-    def __init__(self, already_drawn_cards):
-        for i, card in enumerate(already_drawn_cards):
-            if not isinstance(card, Card):
-                raise WrongTypeError("Trying to instantiate a Dealer object and specifying already_drawn_cards that are not Card objects")
-
-            for j in range (len(already_drawn_cards)):
-                if card == already_drawn_cards[j] and j != i:
-                    raise PokerError("Trying to instantiate a Dealer object and specifying identical Card objects in already_drawn_cards")
-
-        self.__drawn_cards = already_drawn_cards
-        self.__random_gen = random.Random(datetime.datetime.now())
-
-    # return one card taking into account cards that have already been drawn
-    def draw(self):
-        if len(self.__drawn_cards) >= 52:
-            raise PokerError('Trying to distribute more than 52 cards')
-
-        value = self.__random_gen.randint(1, 13)
-        suit = self.__random_gen.randint(1,4)
-        new_card = Card(value, suit)
-
-        if (new_card in self.__drawn_cards):
-            return self.draw()
-
-        self.__drawn_cards += [new_card]
-        return new_card
+        # updating playing_flag of each player to make it True
+        for _, player in self.__players_dict.items():
+            player.playing_flag = True
 
 
-    # reset the drawn cards to an empty array
-    def reset(self):
-        self.__drawn_cards = []
+        # Creating the doubly linked list defining the playing order of the players
+        nb_players = len(players_id_list)
+        for i in range(nb_players):
+            current_player = self.get_player_from_id(players_id_list[i])
+            next_player = self.get_player_from_id(players_id_list[(i+1) % nb_players])
+            prev_player = self.get_player_from_id(players_id_list[i-1])
+
+            current_player.playing_flag = True
+            current_player.next_player = next_player
+            current_player.prev_player = prev_player
+
+        # Attributes
+        self.__card_pack =  CardPack([])
+        self.__board = Board(self.__card_pack)
+        self.__state = "start"
+
+
 
     @property
-    def drawn_cards(self):
-        return self.__drawn_cards
+    def card_pack(self):
+        return self.__card_pack
+
+    @property
+    def players_dict(self):
+        return copy.deepcopy(self.__players_dict)
+
+    @property
+    def board(self):
+        return self.__board
+
+    @property
+    def state(self):
+        return self.__state
+
+
+
+
+    def get_player_from_id(self, player_id):
+        return self.__players_dict[player_id]
+
+    def get_nb_players(self):
+        return len(self.__players_dict)
+
+
+    def distribute_hands(self):
+        if self.__state != "blinds-collected":
+            raise PokerError("Trying to get blinds in a dealer that is not in blinds-collected state")
+
+        for _, player in self.__players_dict.items():
+            hand = Hand(self.__card_pack)
+            hand.receive_cards()
+            player.receive_hand(hand)
+
+        self.__state = "pre-flop"
+
+
+    def flop(self):
+        if self.__state == "finished":
+            return
+        if self.__state != "pre-flop-collected":
+            raise PokerError("Trying to distribute flop with Dealer that is not in pre-flop-collected state")
+
+        self.__board.flop()
+
+        self.__state = "flop"
+
+
+    def turn(self):
+        if self.__state == "finished":
+            return
+        if self.__state != "flop-collected":
+            raise PokerError("Trying to distribute turn with Dealer that is not in flop-collected state")
+
+        self.__board.turn()
+
+        self.__state = "turn"
+
+
+    def river(self):
+        if self.__state == "finished":
+            return
+        if self.__state != "turn-collected":
+            raise PokerError("Trying to distribute river with Dealer that is not in turn-collected state")
+
+        self.__board.river()
+
+        self.__state = "river"
+
+
+
+    def reset(self):
+        # Reset board, card_pack and player's hand
+        self.__card_pack.reset()
+        self.__board.reset()
+        for _, player in self.__players_dict.items():
+            player.hand.reset()
+
+        self.__state = "start"

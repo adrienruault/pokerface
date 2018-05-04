@@ -9,7 +9,7 @@ from .Showdown import Showdown
 class Referee:
 
 
-    def __init__(self, players_dict, board):
+    def arbitrate(self, players_dict, board):
         if board.stage != 3:
             raise PokerError("Trying to get the winner of a Table with a Board object that haven't passed river")
 
@@ -38,9 +38,6 @@ class Referee:
                 winner_found = True
             i+=1
 
-        self.__winner_ids = [players_id_list[i] for i in in_course_idx]
+        winner_ids = [players_id_list[i] for i in in_course_idx]
 
-
-    @property
-    def winner_ids(self):
-        return self.__winner_ids
+        return winner_ids

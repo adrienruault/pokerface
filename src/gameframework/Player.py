@@ -111,7 +111,7 @@ class Player():
 
 
 
-    def ask_action(self, game):
+    def ask_action(self, dealer):
         """
         This is maybe the most important action of the program since it is the method that encapsulates the whole
         policy of a player.
