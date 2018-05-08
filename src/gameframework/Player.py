@@ -42,13 +42,26 @@ class Player():
 
 
     def __repr__(self):
-        to_print = "{player: " + str(self.__id) + " | wallet: " + str(self.__wallet) + "}\n"
-        to_print += "\tHand: " + self.__hand.__repr__() + " | current bet: " + str(self.__current_bet) + "\n"
+        to_print = str(self.__id) + "\n"
+        to_print += "\twallet: " + str(self.__wallet) + "\n"
+        to_print += "\tcurrent bet: " + str(self.__current_bet) + "\n"
+        to_print += "\tHand: " + self.__hand.__repr__() + "\n"
         if self.__playing_flag:
             playing_status = "playing"
         else:
             playing_status = "fold"
-        to_print += "\tstatus: " + playing_status
+        to_print += "\tstatus: " + playing_status + "\n"
+        return to_print
+
+    def print_without_hand(self):
+        to_print = str(self.__id) + "\n"
+        to_print += "\twallet: " + str(self.__wallet) + "\n"
+        to_print += "\tcurrent bet: " + str(self.__current_bet) + "\n"
+        if self.__playing_flag:
+            playing_status = "playing"
+        else:
+            playing_status = "fold"
+        to_print += "\tstatus: " + playing_status + "\n"
         return to_print
 
     @property

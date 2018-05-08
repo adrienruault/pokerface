@@ -57,9 +57,13 @@ class GameMaster(Dealer):
     def big_blind(self):
         return self.__big_blind
 
+    @property
+    def last_winner_ids(self):
+        return self.__last_winner_ids
 
-
-
+    @property
+    def target_bet(self):
+        return self.__target_bet
 
 
 
@@ -128,6 +132,7 @@ class GameMaster(Dealer):
         if self.state == "river":
             winner_ids = self.__referee.arbitrate(self._Dealer__players_dict,\
                                                     self._Dealer__board)
+            self.__last_winner_ids = winner_ids
             self.__terminate_game(winner_ids)
         else:
             # Finish betting round normally
@@ -148,7 +153,8 @@ class GameMaster(Dealer):
             current_player.playing_flag = False
             self.__nb_players_in -= 1
             if self.__nb_players_in < 2:
-                self.__terminate_game([self.__controlling_player_id])
+                self.__last_winner_ids = self.__controlling_player_id
+                self.__terminate_game([self.__last_winner_ids])
                 return
 
             # If first player is folding, a special cas is occuring
@@ -262,11 +268,15 @@ class GameMaster(Dealer):
 
 
     def __repr__(self):
-        to_print = "state: " + str(self._Dealer__state) + "\n"
+        to_print = "=" * 30 + "\n"
+        to_print += "state: " + str(self._Dealer__state) + "\n"
         to_print += "current pot: " + str(self.__pot) + "\n"
-        to_print += "board: " + self._Dealer__board.__repr__() + "\n"
+        to_print += "current target bet: " + str(self.__target_bet) + "\n"
+        to_print += "board: " + self._Dealer__board.__repr__() + "\n\n"
 
+        to_print += "players:\n"
         for _, player in self._Dealer__players_dict.items():
-            to_print += player.__repr__() + "\n"
+            to_print += player.print_without_hand() + "\n"
+        to_print += "=" * 30 + "\n"
 
         return to_print
