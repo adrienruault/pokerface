@@ -1,13 +1,11 @@
-
-
-
+import os
 from gameframework import Dealer, Player, WrongTypeError
 
 
 class TerminalPlayer(Player):
 
 
-    def ask_action(self, dealer):
+    def ask_action(self, game_master):
         """
         Method that triggers a prompt in the terminal to ask what the human player wants
         to do.
@@ -25,14 +23,30 @@ class TerminalPlayer(Player):
             A string defining the action that has been chosen.
             It has to be one of those: 'check', 'fold', 'call' or 'raise'
         """
-        if not isinstance(dealer, Dealer):
+        if not isinstance(game_master, Dealer):
             raise WrongTypeError("You have to provide a Dealer object when calling the Player's ask action method.")
+
+        # Clear terminal and asking for taking turn
+        os.system('cls' if os.name == 'nt' else 'tput reset')
+        print("It's " + self.id + "'s turn.")
+        print("Press enter when you want to take your turn...")
+        input()
+
+        # Clear terminal and asking for new action
+        os.system('cls' if os.name == 'nt' else 'tput reset')
+
+        print(game_master)
+        print()
+        print("Your turn:")
         print(self)
         next_action = input("Choose an action: ")
         while next_action not in self.ACTIONS:
             print("Please choose one of the following actions: 'check', 'fold', 'call' or 'raise'")
             next_action = input("Choose an action: ")
+        self._next_action = next_action
 
         print()
-        self._next_action = next_action
+        print("Your action has been taken into account.")
+        print("Press enter to let your neighbor play...")
+        input()
         return next_action

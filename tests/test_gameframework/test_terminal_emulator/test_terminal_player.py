@@ -10,7 +10,7 @@ def initialize():
 
     return dealer, players_list
 
-@mock.patch('builtins.input', side_effect=['fold', 'caca', 'raise'])
+@mock.patch('builtins.input', side_effect=['', 'fold', '', '',  'caca', 'raise', ''])
 def test_ask_action(input):
     dealer, players_list = initialize()
 

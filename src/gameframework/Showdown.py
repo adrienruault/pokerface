@@ -34,7 +34,6 @@ class Showdown:
         characterisation = self.__hand_characterisation()
 
         if characterisation[1].shape[0] != 5:
-            print("Spotted:", characterisation, hand, board)
             raise PokerError("WooooooW")
 
         # rank ranges between 1 and 9
@@ -140,8 +139,6 @@ class Showdown:
             suit_flush = flush_finder[0] + 1
             flush_values = value_array[np.where(suit_array == suit_flush)]
             values_ans = flush_values[-5:][::-1]
-            print("suit_flush:", suit_flush)
-            print("flush_values", flush_values)
             return 6, values_ans
 
 
