@@ -26,17 +26,17 @@ def main():
     players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     
     # Instantiation of the dealer
-    dealer = Dealer(players_list)
+    gamemaster = GameMaster(players_list)
     
     # Proceedings of the dealer
-    dealer.collect_blinds()
-    dealer.distribute_hands()
-    dealer.flop()
-    dealer.turn()
-    dealer.river()
+    gamemaster.collect_blinds()
+    gamemaster.distribute_hands()
+    gamemaster.flop()
+    gamemaster.turn()
+    gamemaster.river()
     
     # The restart method allows to start a new dealer with the same set of players
-    dealer.restart()
+    gamemaster.restart()
 ```
 
 
