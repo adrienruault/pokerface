@@ -29,11 +29,14 @@ def main():
     gamemaster = GameMaster(players_list)
     
     # Proceedings of the dealer
-    gamemaster.collect_blinds()
     gamemaster.distribute_hands()
+    gamemaster.bet_round()
     gamemaster.flop()
+    gamemaster.bet_round()
     gamemaster.turn()
+    gamemaster.bet_round()
     gamemaster.river()
+    gamemaster.bet_round()
     
     # The restart method allows to start a new dealer with the same set of players
     gamemaster.restart()
