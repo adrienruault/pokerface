@@ -19,7 +19,7 @@ class Player():
         self.__id = id_
         self.__wallet = wallet
         self.__hand = None
-        self._next_action = None
+        self._played_action = None
 
         self.__next_player = None
         self.__prev_player = None
@@ -42,15 +42,10 @@ class Player():
 
 
     def __repr__(self):
-        to_print = str(self.__id) + "\n"
-        to_print += "\twallet: " + str(self.__wallet) + "\n"
-        to_print += "\tcurrent bet: " + str(self.__current_bet) + "\n"
+        to_print = self.print_without_hand()
+
         to_print += "\tHand: " + self.__hand.__repr__() + "\n"
-        if self.__playing_flag:
-            playing_status = "playing"
-        else:
-            playing_status = "fold"
-        to_print += "\tstatus: " + playing_status + "\n"
+        #to_print += "\t"
         return to_print
 
     def print_without_hand(self):
@@ -62,6 +57,10 @@ class Player():
         else:
             playing_status = "fold"
         to_print += "\tstatus: " + playing_status + "\n"
+        if self.played_action == None:
+            to_print += "\tlast played action: hasn't spoken yet\n"
+        else:
+            to_print += "\tlast played action: " + self.played_action + "\n"
         return to_print
 
     @property
@@ -113,14 +112,14 @@ class Player():
 
 
     @property
-    def next_action(self):
-        return self._next_action
+    def played_action(self):
+        return self._played_action
 
-    @next_action.setter
-    def next_action(self, new_action):
+    @played_action.setter
+    def played_action(self, new_action):
         if new_action not in self.ACTIONS:
             raise PokerError("Trying to assign an action to a Player object that is not allowed ")
-        self._next_action = new_action
+        self._played_action = new_action
 
 
 
@@ -130,7 +129,7 @@ class Player():
         policy of a player.
         In the standard case: that is for the base case it returns the exact same as a getter.
         """
-        return self.next_action
+        return self.played_action
 
 
 

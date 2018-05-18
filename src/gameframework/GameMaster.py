@@ -108,16 +108,32 @@ class GameMaster(Dealer):
         # A player can speak while it is not the controlling Player
         # or if it is the big blind, in the first round, in pre-flop and the big blind
         # is still controlling
+        # Be careful to stop the game in the later case if the big blind is checking
+        # or calling on 0
         while ((current_player.id != self.__controlling_player_id)
-                or (current_player.id == self.__controlling_player_id
+                or (self.state == "pre-flop"
                     and current_player.id == self.__big_blind_player_id
-                    and first_round == True and self.state == "pre-flop")):
-
+                    and current_player.id == self.__controlling_player_id
+                    and first_round == True)):
 
             self.__treat_player_action(current_player)
+
+            # Checking that the game hasn't finished while treating a Player's action
+            # Indeed if the current Player is folding and there is only one Player
+            # left on the board then the game stops
             if self.state == "finished":
                 return
 
+            # If we are in the situation where the big bind is controlling the game
+            # at the pre-flop and we are in the very first round of play.
+            # Then if the big blind calls or check it has to end the betting round.
+            if (self.state == "pre-flop"
+                and current_player.id == self.__big_blind_player_id
+                and current_player.id == self.__controlling_player_id
+                and first_round == True
+                and (current_player.played_action == "check"
+                    or current_player.played_action == "call")):
+                break
 
 
             # If the next players are not playing anymore then go to next Player
@@ -145,8 +161,8 @@ class GameMaster(Dealer):
         next_action = current_player.ask_action(self)
         if next_action == "check":
             if abs(self.__target_bet - current_player.current_bet) > 1e-3:
-                raise PokerError("Player is checking but its current bet is not\
-                                    equal to target bet.")
+                raise UnauthorizedPlayerAction("Player is checking but its current\
+                                                bet is not equal to target bet.")
 
         elif next_action == "fold":
 
@@ -185,7 +201,8 @@ class GameMaster(Dealer):
             # Current player is taking control if raising
             self.__controlling_player_id = current_player.id
         else:
-            raise PokerError("None of the allowed actions has been identified for a Player object in a bet round.")
+            raise UnauthorizedPlayerAction("None of the allowed actions has been\
+                                            identified for a Player object in a bet round.")
 
 
 
