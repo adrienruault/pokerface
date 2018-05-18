@@ -43,7 +43,7 @@ class TerminalPlayer(Player):
         while next_action not in self.ACTIONS:
             print("Please choose one of the following actions: 'check', 'fold', 'call' or 'raise'")
             next_action = input("Choose an action: ")
-        self._next_action = next_action
+        self._played_action = next_action
 
         print()
         print("Your action has been taken into account.")

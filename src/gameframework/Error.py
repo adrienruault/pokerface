@@ -9,3 +9,6 @@ class PokerError(Exception):
 
 class MoneyError(Exception):
     pass
+
+class UnauthorizedPlayerAction(Exception):
+    pass

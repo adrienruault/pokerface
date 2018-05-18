@@ -7,7 +7,7 @@ import pdb
 def initialize_call_players():
     players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
     for player in players_list:
-        player.next_action = "call"
+        player.played_action = "call"
     game_master = GameMaster(players_list)
 
     return game_master
@@ -173,9 +173,9 @@ def test_full_game_master_with_various_players():
     #pdb.set_trace()
 
     players_list = [Player("a", 1000.), Player("b", 1000.), Player("c", 1000.)]
-    players_list[0].next_action = "call"
-    players_list[1].next_action = "raise"
-    players_list[2].next_action = "fold"
+    players_list[0].played_action = "call"
+    players_list[1].played_action = "raise"
+    players_list[2].played_action = "fold"
 
     game_master = GameMaster(players_list)
 

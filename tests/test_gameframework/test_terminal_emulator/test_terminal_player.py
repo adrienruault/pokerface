@@ -17,10 +17,10 @@ def test_ask_action(input):
     player1 = players_list[0]
     player1.ask_action(dealer)
 
-    assert player1.next_action == 'fold'
+    assert player1.played_action == 'fold'
 
     player1.ask_action(dealer)
-    assert player1.next_action == 'raise'
+    assert player1.played_action == 'raise'
 
 
     with pytest.raises(WrongTypeError):
