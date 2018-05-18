@@ -43,6 +43,12 @@ class TerminalPlayer(Player):
         while next_action not in self.ACTIONS:
             print("Please choose one of the following actions: 'check', 'fold', 'call' or 'raise'")
             next_action = input("Choose an action: ")
+
+        while (next_action == "check"
+                and abs(game_master.target_bet - self.current_bet) > 1e-3):
+            print("It is not allowed to 'check' in this situation")
+            next_action = input("Choose an action: ")
+
         self._played_action = next_action
 
         print()

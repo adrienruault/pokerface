@@ -33,3 +33,12 @@ def test_all_calling(input):
 def test_challenge_input(input):
     emulator = TerminalEmulator()
     emulator.launch()
+
+
+
+@mock.patch('builtins.input', side_effect=['2', 'adrien', '100', 'flora',\
+                                            '100', '', 'call', '', '', 'fold',\
+                                            '', 'no'])
+def test_big_bind_pre_flop_input(input):
+    emulator = TerminalEmulator()
+    emulator.launch()
