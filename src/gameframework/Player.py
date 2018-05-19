@@ -42,7 +42,7 @@ class Player():
 
 
     def __repr__(self):
-        to_print = self.print_without_hand()
+        to_print = self.print_without_hand()    
 
         to_print += "\tHand: " + self.__hand.__repr__() + "\n"
         #to_print += "\t"

@@ -48,3 +48,37 @@ def test_can_identify_ranks_accurately():
     print("Number of cards drawn:", nb_draws)
     for index, rank in enumerate(Showdown.RANKS):
         assert abs(frequencies[index] - expected[index]) < 0.01
+
+
+
+
+
+
+
+def test_can_compress():
+
+    hand = Hand(None)
+    board = Board(None)
+
+    hand.cards[0] = Card(10, 3)
+    hand.cards[1] = Card(7, 1)
+
+    board.cards[0] = Card(2, 1)
+    board.cards[1] = Card(3, 4)
+    board.cards[2] = Card(1, 1)
+    board.cards[3] = Card(2, 4)
+    board.cards[4] = Card(13, 2)
+
+    board.stage = 3
+
+    showdown = Showdown(hand, board)
+
+    concat = showdown.compress()
+
+    assert concat[0].value == 7 and concat[0].suit == 1
+    assert concat[1].value == 10 and concat[1].suit == 2
+    assert concat[2].value == 1 and concat[2].suit == 1
+    assert concat[3].value == 2 and concat[3].suit == 1
+    assert concat[4].value == 2 and concat[4].suit == 3
+    assert concat[5].value == 3 and concat[5].suit == 3
+    assert concat[6].value == 13 and concat[6].suit == 4
