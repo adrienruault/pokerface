@@ -1,5 +1,5 @@
 
-
+import copy
 import numpy as np
 from .Hand import Hand
 from .Board import Board
@@ -28,6 +28,9 @@ class Showdown:
             raise WrongTypeError('Trying to construct a Showdown object without a Board object')
         if board.stage != 3:
             raise PokerError("Trying to construct a Showdown object with a Board object that haven't passed river")
+
+        self.__hand = hand.cards
+        self.__board = board.cards
 
         self.__cards = sorted(hand.cards + board.cards)
 
@@ -240,3 +243,30 @@ class Showdown:
         The following elements are the kickers.
         """
         return self.__rank_array
+
+
+
+
+
+
+
+
+    def compress(self):
+        sort_hand = sorted(self.__hand)
+        sort_board = sorted(self.__board)
+        concat = copy.deepcopy(sort_hand + sort_board)
+
+        # suit_refs contains
+        suit_converter = {1: None, 2: None, 3: None, 4: None}
+
+        count_new_suits = 1
+        for card in concat:
+            suit = card.suit
+            if suit_converter[suit] == None:
+                suit_converter[suit] = count_new_suits
+                card.suit = count_new_suits
+                count_new_suits += 1
+            else:
+                card.suit = suit_converter[suit]
+
+        return concat

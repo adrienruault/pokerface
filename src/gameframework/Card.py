@@ -46,6 +46,12 @@ class Card:
     def value(self):
         return self.__value
 
+
+
     @property
     def suit(self):
         return self.__suit
+
+    @suit.setter
+    def suit(self, new_suit):
+        self.__suit = new_suit
