@@ -27,6 +27,8 @@ def test_can_identify_ranks_accurately():
 
     nb_draws = int(1e4)
 
+
+
     for i in range(nb_draws):
         hand.receive_cards()
         board.flop()
@@ -34,7 +36,10 @@ def test_can_identify_ranks_accurately():
         board.river()
 
         showdown = Showdown(hand, board)
-        frequencies[showdown.rank-1] += 1
+
+        rank_array = showdown.characterize()
+        print(rank_array)
+        frequencies[int(rank_array[0])-1] += 1
 
         hand.reset()
         board.reset()

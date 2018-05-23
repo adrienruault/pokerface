@@ -14,3 +14,4 @@ from .Player import Player
 from .Dealer import Dealer
 from .GameMaster import GameMaster
 from .terminal_emulator import TerminalEmulator, TerminalPlayer
+from .Simulator import Simulator

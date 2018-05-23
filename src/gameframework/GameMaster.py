@@ -146,8 +146,17 @@ class GameMaster(Dealer):
                     first_round = False
 
         if self.state == "river":
-            winner_ids = self.__referee.arbitrate(self._Dealer__players_dict,\
-                                                    self._Dealer__board)
+            compet_hands = []
+            compet_player_ids = []
+            for id_, player in self._Dealer__players_dict.items():
+                if player.playing_flag == True:
+                    compet_hands += [player.hand]
+                    compet_player_ids += [id_]
+
+            winner_keys = self.__referee.arbitrate(compet_hands, self._Dealer__board)
+
+            winner_ids = [compet_player_ids[i] for i in winner_keys]
+
             self.__last_winner_ids = winner_ids
             self.__terminate_game(winner_ids)
         else:
