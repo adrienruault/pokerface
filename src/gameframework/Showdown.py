@@ -34,25 +34,12 @@ class Showdown:
 
         self.__cards = sorted(hand.cards + board.cards)
 
-        characterisation = self.__hand_characterisation()
-
-        if characterisation[1].shape[0] != 5:
-            raise PokerError("WooooooW")
-
-        # rank ranges between 1 and 9
-        self.__rank = characterisation[0]
-
-        # kickers is a numpy array of 5 values allowing to differentiate hands of same rank
-        self.__kickers = characterisation[1]
-
-        # rank_array is a numpy array resulting of the concatenation between the
-        # rank and the kickers. It has to be of length 6
-        self.__rank_array = np.append(np.array(characterisation[0]), characterisation[1])
 
 
 
     def __repr__(self):
-        return self.__cards.__repr__() + ' -> ' + self.RANKS[self.__rank-1]
+        return self.__cards.__repr__()
+
 
     # ranks
     # 9: straight flush
@@ -64,7 +51,7 @@ class Showdown:
     # 3: two pairs
     # 2: pair
     # 1: high card
-    def __hand_characterisation(self):
+    def characterize(self):
         """
         Return a tuple with the first argument being the rank of the hand and the
         second one being a numpy array of length 5 representing the 5 kickers of
@@ -101,7 +88,8 @@ class Showdown:
             if straight__flush__count[suit-1] >= 5:
                 values_ans = np.zeros(5)
                 values_ans[0] = straight__flush__current_value[suit-1]
-                return 9, values_ans
+
+                return np.append(np.array(9), values_ans)
 
             # suit_count is only used to spot a flush later
             suit_count[suit-1] += 1
@@ -124,8 +112,7 @@ class Showdown:
             else:
                 kicker__value = self.__cards[-1].value
             values_ans[1] = kicker__value
-
-            return 8, values_ans
+            return np.append(np.array(8), values_ans)
 
 
 
@@ -134,7 +121,7 @@ class Showdown:
             values_ans = np.zeros(5)
             values_ans[0] = three_of_a_kind_value[0]
             values_ans[1] = pair_values[-1]
-            return 7, values_ans
+            return np.append(np.array(7), values_ans)
 
         # check flush
         flush_finder = np.where(suit_count >= 5)[0]
@@ -142,7 +129,7 @@ class Showdown:
             suit_flush = flush_finder[0] + 1
             flush_values = value_array[np.where(suit_array == suit_flush)]
             values_ans = flush_values[-5:][::-1]
-            return 6, values_ans
+            return np.append(np.array(6), values_ans)
 
 
 
@@ -176,7 +163,7 @@ class Showdown:
         if max_straight_count >= 5:
             values_ans = np.zeros(5)
             values_ans[0] = max_straight_value
-            return 5, values_ans
+            return np.append(np.array(5), values_ans)
 
         # check three of a kind
         if len(three_of_a_kind_value) != 0:
@@ -189,13 +176,13 @@ class Showdown:
                     if value_bins[index] > 1:
                         values_ans[1] = index
                         values_ans[2] = index
-                        return 4, values_ans
+                        return np.append(np.array(4), values_ans)
                     if value_bins[index] == 1 and first_kicker_found == False:
                         values_ans[1] = index
                         first_kicker_found = True
                     else:
                         values_ans[2] = index
-                        return 4, values_ans
+                        return np.append(np.array(4), values_ans)
 
         # check two pair
         if len(pair_values) >= 2:
@@ -207,7 +194,7 @@ class Showdown:
             for index in range(13, -1, -1):
                 if index != pair_values[-1] and index != pair_values[-2]:
                     values_ans[2] = index
-                    return 3, values_ans
+                    return np.append(np.array(3), values_ans)
 
         # check one pair
         if len(pair_values) == 1:
@@ -223,26 +210,9 @@ class Showdown:
                 if index != pair_values[0] and nb_kickers_found < 3:
                     nb_kickers_found += 1
                     values_ans[nb_kickers_found] = index
+            return np.append(np.array(2), values_ans)
 
-            return 2, values_ans
-
-        return 1, value_array[-5:][::-1]
-
-    @property
-    def rank(self):
-        return self.__rank
-
-    @property
-    def kickers(self):
-        return self.__kickers
-
-    @property
-    def rank_array(self):
-        """
-        The first element of the rank array is the rank of the showdown.
-        The following elements are the kickers.
-        """
-        return self.__rank_array
+        return np.append(np.array(1), value_array[-5:][::-1])
 
 
 
