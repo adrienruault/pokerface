@@ -7,7 +7,8 @@ import numpy as np
 from .Board import Board
 from .Card import Card
 from .CardPack import CardPack
-from .Error import WrongTypeError, PokerError, MoneyError
+from .Error import WrongTypeError, PokerError, MoneyError, UnauthorizedPlayerAction,\
+                    InvalidArgumentError
 from .Hand import Hand
 from .Showdown import Showdown
 from .Player import Player
