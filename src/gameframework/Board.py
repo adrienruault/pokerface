@@ -41,6 +41,29 @@ class Board:
 
             self.__stage +=1
 
+
+
+
+    def next_stage(self):
+        """
+        This method identifies the stage the board is in and then triggers the
+        next stage.
+        """
+
+        if self.__stage == 0:
+            self.flop()
+        elif self.__stage == 1:
+            self.turn()
+        elif self.__stage == 2:
+            self.river()
+        else:
+            raise PokerError("Trying to go further than the river")
+
+
+
+
+
+
     def __repr__(self):
         return self.__cards.__repr__()
 
@@ -56,7 +79,7 @@ class Board:
                 return False
 
             return True
-        
+
     def reset(self):
         self.__cards = [None, None, None, None, None]
         self.__stage = 0

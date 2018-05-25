@@ -1,3 +1,4 @@
 pytest-cov
 coveralls
 numpy
+pandas

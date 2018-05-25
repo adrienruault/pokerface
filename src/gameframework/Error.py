@@ -1,6 +1,12 @@
 
 
 
+
+
+
+class InvalidArgumentError(Exception):
+    pass
+
 class WrongTypeError(Exception):
     pass
 

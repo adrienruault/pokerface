@@ -59,6 +59,37 @@ def test_river():
     assert len(card_pack.drawn_cards) == 5
 
 
+def test_next_stage():
+    board, card_pack = initialize()
+
+    board.next_stage()
+    # test if in flop
+    assert board.cards[4] == None
+    assert isinstance(board.cards[0], Card)
+    assert len(board.cards) == 5
+    assert board.stage == 1
+    assert len(card_pack.drawn_cards) == 3
+
+    board.next_stage()
+    # test if in turn
+    assert board.cards[4] == None
+    assert isinstance(board.cards[0], Card)
+    assert len(board.cards) == 5
+    assert board.stage == 2
+    assert len(card_pack.drawn_cards) == 4
+
+    board.next_stage()
+    # test if in river
+    assert isinstance(board.cards[4], Card)
+    assert isinstance(board.cards[0], Card)
+    assert len(board.cards) == 5
+    assert board.stage == 3
+    assert len(card_pack.drawn_cards) == 5
+
+
+
+
+
 def test_reset():
     board, card_pack = initialize()
 
