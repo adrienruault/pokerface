@@ -1,6 +1,7 @@
 
 import math
 import copy
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -19,7 +20,7 @@ class Simulator:
 
 
 
-    def generate_training_set(self, nb_trainings = 10):
+    def generate_training_set(self, nb_trainings, verbose = True):
         """
         Outputs a dataframe with the winning probabilities given a game situation
         that is: a hand and a board.
@@ -31,12 +32,16 @@ class Simulator:
                      'winning_proba', 'confidence95']
 
         train_set = []
+        nb_simu = 1000
         for i in range(nb_trainings):
             game, win_prob, conf95 = self.simulate_random_head_to_head(
-                                                                    nb_simu=1000,
+                                                                    nb_simu,
                                                                     board_stage=3)
+            if verbose == True and i%10 == 0:
+                date = datetime.now()
+                string_date = "[%02d:%02d:%02d]" % (date.hour, date.minute, date.second)
+                print(string_date, "generated ", i, "trainings")
             line = game + [win_prob] + [conf95]
-
             train_set += [line]
 
         return pd.DataFrame(train_set, columns=columns)
@@ -101,6 +106,10 @@ class Simulator:
         showdown = Showdown(hand, board)
         compressed_list = showdown.compress()
         return compressed_list, p_hat, width_conf_interval
+
+
+
+
 
 
 

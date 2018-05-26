@@ -12,7 +12,7 @@ def main():
 
     simulator = Simulator()
 
-    df = simulator.generate_training_set(nb_trainings=100)
+    df = simulator.generate_training_set(nb_trainings=10000, verbose = True)
     df.to_csv(sys.path[0] + '/head_to_head.csv')
 
 
