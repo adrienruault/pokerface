@@ -15,4 +15,5 @@ from .Player import Player
 from .Dealer import Dealer
 from .GameMaster import GameMaster
 from .terminal_emulator import TerminalEmulator, TerminalPlayer
+from .Referee import Referee
 from .Simulator import Simulator
