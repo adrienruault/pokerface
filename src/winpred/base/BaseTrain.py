@@ -1,10 +1,10 @@
+
 import tensorflow as tf
 
 
 class BaseTrain:
-    def __init__(self, sess, model, data, config, logger):
+    def __init__(self, sess, model, data, config):
         self.model = model
-        self.logger = logger
         self.config = config
         self.sess = sess
         self.data = data
@@ -12,9 +12,19 @@ class BaseTrain:
         self.sess.run(self.init)
 
     def train(self):
+
+        coord = tf.train.Coordinator()
+        thread = tf.train.start_queue_runners(coord=coord)
+
         for cur_epoch in range(self.model.cur_epoch_tensor.eval(self.sess), self.config.num_epochs + 1, 1):
             self.train_epoch()
             self.sess.run(self.model.increment_cur_epoch_tensor)
+
+        # Stop the threads
+        coord.request_stop()
+
+        # Wait for threads to stop
+        coord.join(thread)
 
     def train_epoch(self):
         """
@@ -31,6 +41,3 @@ class BaseTrain:
         - return any metrics you need to summarize
         """
         raise NotImplementedError
-
-
-    

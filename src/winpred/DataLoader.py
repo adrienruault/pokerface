@@ -7,7 +7,7 @@ import tensorflow as tf
 
 
 
-class DataFormater:
+class DataLoader:
 
     suit_convert = {'H': 1, 'D': 2, 'C': 3, 'S': 4}
 
@@ -18,17 +18,29 @@ class DataFormater:
     def __init__(self, config):
         self.data_file = config.data_file
 
-        exp_folder = 'xp/' + config.exp_name
-        tfrecords_folder = exp_folder + '/tfrecords'
+        self.train_file = config.tfrecords_dir +  '/train.tfrecords'
+        self.test_file = config.tfrecords_dir + '/test.tfrecords'
 
-        if not os.path.isdir(exp_folder):
-            os.mkdir(exp_folder)
+        if config.generate_tfrecords == "True":
+            self.write_train_and_test_sets(train_ratio=config.train_ratio)
 
-        if not os.path.isdir(tfrecords_folder):
-            os.mkdir(tfrecords_folder)
+        cards_batch, winprob_batch = self.build_batch_ops(
+                                                batch_size=config.batch_size,
+                                                filename=self.train_file
+                                                )
+        self.getter_cards_batch = cards_batch
+        self.getter_winprob_batch = winprob_batch
 
-        self.train_file = tfrecords_folder +  '/train.tfrecords'
-        self.test_file = tfrecords_folder + '/test.tfrecords'
+        cards_test, winprob_test = self.build_batch_ops(
+                                                batch_size=1,
+                                                filename=self.test_file
+                                                )
+        self.getter_cards_test = cards_test
+        self.getter_winprob_test = winprob_test
+
+
+
+
 
 
 
@@ -84,17 +96,15 @@ class DataFormater:
             writer.write(example.SerializeToString())
 
 
-    def get_batch(self, batch_size=10):
-
-        train_filename = self.train_file
+    def build_batch_ops(self, batch_size, filename):
 
         reader = tf.TFRecordReader()
-        filename_queue = tf.train.string_input_producer([train_filename])
+        filename_queue = tf.train.string_input_producer([filename])
         _, serialized_example = reader.read(filename_queue)
 
         # Define features
         read_features = {
-            'winprob': tf.FixedLenFeature([], dtype=tf.float32),
+            'winprob': tf.FixedLenFeature([1], dtype=tf.float32),
             'cards': tf.FixedLenFeature([133], dtype=tf.int64)}
 
         # Extract features from serialized data
@@ -107,6 +117,11 @@ class DataFormater:
         cards_batch, winprob_batch = tf.train.shuffle_batch([cards_op, winprob_op], batch_size=batch_size,\
                                             capacity=3*batch_size, num_threads=1,\
                                             min_after_dequeue=batch_size)
+
+        return cards_batch, winprob_batch
+
+
+
 
 
     @classmethod

@@ -42,5 +42,3 @@ class BaseModel:
 
     def build_model(self):
         raise NotImplementedError
-
-    
