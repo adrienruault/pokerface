@@ -12,7 +12,7 @@ The software runs with python3 and the following python packages are needed:
 
 - numpy
 - pandas
-- tensorflow 1.4
+- tensorflow 1.8
 - bunch
 
 
