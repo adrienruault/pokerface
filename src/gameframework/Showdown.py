@@ -3,7 +3,7 @@ import copy
 import numpy as np
 from .Hand import Hand
 from .Board import Board
-from .Error import PokerError
+from .Error import PokerError, InvalidArgumentError
 
 
 
@@ -26,10 +26,10 @@ class Showdown:
             raise InvalidArgumentError('Trying to construct a Showdown object with\
                                         a hand that is not of length 2.')
         if len(board_cards) != 5:
-            raise WrongTypeError('Trying to construct a Showdown object with a\
+            raise InvalidArgumentError('Trying to construct a Showdown object with a\
                                     board that is not of length 5.')
         if None in board_cards:
-            raise PokerError("Trying to construct a Showdown with undefined cards\
+            raise InvalidArgumentError("Trying to construct a Showdown with undefined cards\
                                 for board.")
 
         self.__hand = hand_cards
@@ -70,7 +70,7 @@ class Showdown:
 
         # suit_count is only used to spot a flush later
         # Each entry counts the number of cards encountered in each suit
-        suit_count = np.zeros(4)
+        suit_count = np.zeros(4, dtype=int)
 
         # go through showdown's cards to check straight flush and plain flush
         for card in self.__cards:
@@ -89,7 +89,7 @@ class Showdown:
                 straight__flush__count[suit-1] = 1
 
             if straight__flush__count[suit-1] >= 5:
-                values_ans = np.zeros(5)
+                values_ans = np.zeros(5, dtype=int)
                 values_ans[0] = straight__flush__current_value[suit-1]
 
                 return np.append(np.array(9), values_ans)
@@ -103,10 +103,12 @@ class Showdown:
         four__of__a__kind__value = np.where(value_bins==4)[0]
         three_of_a_kind_value = np.where(value_bins==3)[0]
         pair_values = np.where(value_bins==2)[0]
+        #print("value_bins", value_bins)
+        #print("pair_values", pair_values)
 
         # check four of a kind
         if len(four__of__a__kind__value) != 0:
-            values_ans = np.zeros(5)
+            values_ans = np.zeros(5, dtype=int)
             values_ans[0] = four__of__a__kind__value[0]
 
             # spotting the kicker
@@ -121,7 +123,7 @@ class Showdown:
 
         # check full house
         if len(three_of_a_kind_value) != 0 and len(pair_values) != 0:
-            values_ans = np.zeros(5)
+            values_ans = np.zeros(5, dtype=int)
             values_ans[0] = three_of_a_kind_value[0]
             values_ans[1] = pair_values[-1]
             return np.append(np.array(7), values_ans)
@@ -164,13 +166,13 @@ class Showdown:
                     straight_count = 1
 
         if max_straight_count >= 5:
-            values_ans = np.zeros(5)
+            values_ans = np.zeros(5, dtype=int)
             values_ans[0] = max_straight_value
             return np.append(np.array(5), values_ans)
 
         # check three of a kind
         if len(three_of_a_kind_value) != 0:
-            values_ans = np.zeros(5)
+            values_ans = np.zeros(5, dtype=int)
             values_ans[0] = three_of_a_kind_value[-1]
 
             first_kicker_found = False
@@ -189,7 +191,7 @@ class Showdown:
 
         # check two pair
         if len(pair_values) >= 2:
-            values_ans = np.zeros(5)
+            values_ans = np.zeros(5, dtype=int)
             values_ans[0] = pair_values[-1]
             values_ans[1] = pair_values[-2]
 
@@ -201,7 +203,7 @@ class Showdown:
 
         # check one pair
         if len(pair_values) == 1:
-            values_ans = np.zeros(5)
+            values_ans = np.zeros(5, dtype=int)
             values_ans[0] = pair_values[0]
 
             # spotting the kickers
@@ -219,6 +221,12 @@ class Showdown:
 
 
 
+
+    def get_string_rank(self):
+        rank_array = self.characterize()
+        #print("rank_array.dtype", rank_array.dtype)
+        #print(rank_array[0])
+        return self.RANKS[rank_array[0]-1]
 
 
 

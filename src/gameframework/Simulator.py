@@ -117,7 +117,22 @@ class Simulator:
             opponent_hand.receive_cards()
 
             winner_ids = referee.arbitrate([hand, opponent_hand], board)
-            if 0 in winner_ids:
+            showdown1 = Showdown(hand.cards, board.cards)
+            showdown2 = Showdown(opponent_hand.cards, board.cards)
+            print()
+            print("Game:")
+            print("me", hand)
+            print("\t", showdown1.get_string_rank())
+            print("\t", showdown1.characterize())
+            print("opp", opponent_hand)
+            print("\t", showdown2.get_string_rank())
+            print("\t", showdown2.characterize())
+            print("board", board)
+            print("winners", winner_ids)
+
+            if len(winner_ids) == 2:
+                victory_array[i] = 0.5
+            elif 0 in winner_ids:
                 victory_array[i] = 1
 
             #print("\t\t -> ", i)
