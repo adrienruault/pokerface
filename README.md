@@ -11,6 +11,9 @@ The idea of this project is to use reinforcement learning to create an AI able t
 The software runs with python3 and the following python packages are needed:
 
 - numpy
+- pandas
+- tensorflow 1.8
+- bunch
 
 
 
