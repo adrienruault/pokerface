@@ -166,7 +166,7 @@ def test_collect_blinds():
     with pytest.raises(PokerError):
         game_master.collect_blinds()
 
-import pdb
+
 
 def test_full_game_master_with_various_players():
 

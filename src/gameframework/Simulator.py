@@ -26,19 +26,41 @@ class Simulator:
         columns = ['hand_c1', 'hand_c2',\
                      'board_c1', 'board_c2', 'board_c3',\
                      'board_c4', 'board_c5',\
-                     'winning_proba', 'confidence95']
+                     'winprob_1', 'conf95_1', 'winprob_2', 'conf95_2',\
+                     'winprob_3', 'conf95_3', 'winprob_4', 'conf95_3']
 
         train_set = []
-        nb_simu = 1000
         for i in range(nb_trainings):
-            game, win_prob, conf95 = self.simulate_random_head_to_head(
-                                                                    nb_simu,
-                                                                    board_stage=3)
+            print("training:", i)
+
+            # The board output by draw_game_situation is an empty board
+            # And it is filled up as we go through the coming loop
+            hand, board, card_pack = self.draw_game_situation()
+
+            results = []
+            for j in range(4):
+                print("\tstage ->", j)
+                win_prob, conf95 = self.simulate_random_head_to_head(
+                                                        tol=1e-3,
+                                                        hand=hand,
+                                                        board_ref=board,
+                                                        card_pack_ref=card_pack
+                                                        )
+                results +=  [win_prob] + [conf95]
+
+                if j < 3:
+                    board.next_stage()
+
+
             if verbose == True and i%10 == 0:
                 date = datetime.now()
                 string_date = "[%02d:%02d:%02d]" % (date.hour, date.minute, date.second)
-                print(string_date, "generated ", i, "trainings")
-            line = game + [win_prob] + [conf95]
+                print(string_date, "generated", i+1, "trainings")
+
+            showdown = Showdown(hand, board)
+            compressed_game = showdown.compress()
+
+            line = compressed_game + results
             train_set += [line]
 
         return pd.DataFrame(train_set, columns=columns)
@@ -54,31 +76,35 @@ class Simulator:
 
 
 
-    def simulate_random_head_to_head(self, nb_simu, board_stage):
+    def simulate_random_head_to_head(self, tol, hand, board_ref, card_pack_ref):
         """
-        This methods randomly picks up a game situuation in head to head and then
+        This methods takes as input a game situuation in head to head and then
         simulate #nb_simu games to estimate the winning probability for the player
         in the game situation.
         """
-        hand, board_ref, card_pack_ref = self.__draw_game_situation(board_stage)
+        board_stage_ref = board_ref.stage
+        print("\t\t", hand)
+        print("\t\t", board_ref)
 
         drawn_cards_ref = card_pack_ref.drawn_cards
 
         referee = Referee()
 
-        victory_array = np.zeros(nb_simu)
-
-
-        for i in range(nb_simu):
+        nb_max_iter = int(1e5)
+        test_var_every = 1000
+        victory_array = np.zeros(nb_max_iter)
+        for i in range(nb_max_iter):
             # create card_pack thet inherits the cards that have already been drawn
             drawn_cards = list(drawn_cards_ref)
             card_pack = CardPack(drawn_cards)
 
+            # create new board which is a copy of the board passed as input
             board = Board(card_pack)
             board.cards = list(board_ref.cards)
-            board.stage = board_stage
+            board.stage = board_stage_ref
 
-            for i in range(3, board_stage, -1):
+            # Draw the remaining cards to finish the game
+            for j in range(board_stage_ref, 3):
                 board.next_stage()
 
             # Create an opponent hand
@@ -89,8 +115,26 @@ class Simulator:
             if 0 in winner_ids:
                 victory_array[i] = 1
 
+            #print("\t\t -> ", i)
+            if (i+1) % test_var_every == 0:
+                print("\t\titer ->", i)
+                # compute confidence interval of the winning probability estimator
+                _, width_conf_interval = self.compute_bernoulli_estimator(victory_array[:i])
+                print("\t\tp_hat:", _)
+                print("\t\tconf:", width_conf_interval)
+                if width_conf_interval < tol:
+                    break
 
-        p_hat = np.mean(victory_array)
+        p_hat, width_conf_interval = self.compute_bernoulli_estimator(victory_array)
+
+        return p_hat, width_conf_interval
+
+
+
+    def compute_bernoulli_estimator(self, bin_array):
+        # compute confidence interval of the winning probability estimator
+        p_hat = np.mean(bin_array)
+        nb_simu = bin_array.shape[0]
         # See https://www.youtube.com/watch?v=ESKpJi2vLCw for variance of the
         # Bernoulli estimator p hat
         var_p_hat = p_hat * (1 - p_hat) / nb_simu
@@ -99,18 +143,11 @@ class Simulator:
         # width of the confidence interval at 95%
         width_conf_interval = 2 * 1.96 * std_hat / np.sqrt(nb_simu)
 
-
-        showdown = Showdown(hand, board)
-        compressed_list = showdown.compress()
-        return compressed_list, p_hat, width_conf_interval
+        return p_hat, width_conf_interval
 
 
 
-
-
-
-
-    def __draw_game_situation(self, board_stage):
+    def draw_game_situation(self):
 
         card_pack = CardPack([])
 
@@ -119,7 +156,7 @@ class Simulator:
 
         board = Board(card_pack)
 
-        for i in range(board_stage):
-            board.next_stage()
+        #for i in range(3):
+        #    board.next_stage()
 
         return hand, board, card_pack

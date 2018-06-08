@@ -50,6 +50,7 @@ class Dealer():
         self.__card_pack =  CardPack([])
         self.__board = Board(self.__card_pack)
         self.__state = "start"
+        self.__bet_round_done = False
 
 
 
@@ -69,6 +70,10 @@ class Dealer():
     def state(self):
         return self.__state
 
+    @property
+    def bet_round_done(self):
+        return self.__bet_round_done
+
 
 
 
@@ -80,7 +85,7 @@ class Dealer():
 
 
     def distribute_hands(self):
-        if self.__state != "blinds-collected":
+        if self.__state != "start":
             raise PokerError("Trying to get blinds in a dealer that is not in blinds-collected state")
 
         for _, player in self.__players_dict.items():
@@ -90,38 +95,50 @@ class Dealer():
 
         self.__state = "pre-flop"
 
+        # Updating bet_round_done to False in order to allow betting round to occur
+        self.__bet_round_done = False
+
 
     def flop(self):
         if self.__state == "finished":
             return
-        if self.__state != "pre-flop-collected":
+        if self.__state != "pre-flop":
             raise PokerError("Trying to distribute flop with Dealer that is not in pre-flop-collected state")
 
         self.__board.flop()
 
         self.__state = "flop"
 
+        # Updating bet_round_done to False in order to allow betting round to occur
+        self.__bet_round_done = False
+
 
     def turn(self):
         if self.__state == "finished":
             return
-        if self.__state != "flop-collected":
+        if self.__state != "flop":
             raise PokerError("Trying to distribute turn with Dealer that is not in flop-collected state")
 
         self.__board.turn()
 
         self.__state = "turn"
 
+        # Updating bet_round_done to False in order to allow betting round to occur
+        self.__bet_round_done = False
+
 
     def river(self):
         if self.__state == "finished":
             return
-        if self.__state != "turn-collected":
+        if self.__state != "turn":
             raise PokerError("Trying to distribute river with Dealer that is not in turn-collected state")
 
         self.__board.river()
 
         self.__state = "river"
+
+        # Updating bet_round_done to False in order to allow betting round to occur
+        self.__bet_round_done = False
 
 
 
@@ -133,3 +150,5 @@ class Dealer():
             player.hand.reset()
 
         self.__state = "start"
+        # Updating bet_round_done to False in order to allow betting round to occur
+        self.__bet_round_done = False

@@ -2,7 +2,11 @@
 
 import sys
 
-from Simulator import Simulator
+sys.path.append(sys.path[0] + "/../../")
+#print(sys.path)
+
+
+from gameframework import Simulator
 
 
 def main():

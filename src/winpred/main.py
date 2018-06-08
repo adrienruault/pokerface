@@ -29,7 +29,6 @@ def main():
         # create trainer and pass all the previous components to it
         trainer = Trainer(sess, model, data, config)
 
-        print("hello")
         # here you train your model
         trainer.train()
 
