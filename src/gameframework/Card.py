@@ -19,6 +19,23 @@ class Card:
         self.__value = value
         self.__suit = suit
 
+    @staticmethod
+    def create_from_string(self, card_string):
+        """
+        Create a card from a string in the V-S format
+        With V standing for Value and S standing for Suit.
+        """
+        if not isinstance(card_string, str):
+            raise InvalidArgumentError("Tried to construct a string with the V-S\
+                                        format but the argument is not a string")
+        elems = card_string.split('-')
+
+        card_value = self.VALUES.index(elems[0]) + 1
+        card_suit = self.SUITS.index([elems[1]]) + 1
+
+        self.__init__(card_value, card_suit)
+
+
     def __eq__(self, other):
         if other == None:
             return False

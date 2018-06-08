@@ -57,7 +57,7 @@ class Simulator:
                 string_date = "[%02d:%02d:%02d]" % (date.hour, date.minute, date.second)
                 print(string_date, "generated", i+1, "trainings")
 
-            showdown = Showdown(hand, board)
+            showdown = Showdown(hand.cards, board.cards)
             compressed_game = showdown.compress()
 
             line = compressed_game + results

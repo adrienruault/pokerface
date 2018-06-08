@@ -21,18 +21,21 @@ class Showdown:
                 'flush', 'full house', 'four of a kind', 'straight flush']
 
 
-    def __init__(self, hand, board):
-        if type(hand) is not Hand:
-            raise WrongTypeError('Trying to construct a Showdown object without a Hand object')
-        if type(board) is not Board:
-            raise WrongTypeError('Trying to construct a Showdown object without a Board object')
-        if board.stage != 3:
-            raise PokerError("Trying to construct a Showdown object with a Board object that haven't passed river")
+    def __init__(self, hand_cards, board_cards):
+        if len(hand_cards) != 2:
+            raise InvalidArgumentError('Trying to construct a Showdown object with\
+                                        a hand that is not of length 2.')
+        if len(board_cards) != 5:
+            raise WrongTypeError('Trying to construct a Showdown object with a\
+                                    board that is not of length 5.')
+        if None in board_cards:
+            raise PokerError("Trying to construct a Showdown with undefined cards\
+                                for board.")
 
-        self.__hand = hand.cards
-        self.__board = board.cards
+        self.__hand = hand_cards
+        self.__board = board_cards
 
-        self.__cards = sorted(hand.cards + board.cards)
+        self.__cards = sorted(hand_cards + board_cards)
 
 
 
