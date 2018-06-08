@@ -35,7 +35,7 @@ def test_can_identify_ranks_accurately():
         board.turn()
         board.river()
 
-        showdown = Showdown(hand, board)
+        showdown = Showdown(hand.cards, board.cards)
 
         rank_array = showdown.characterize()
         print(rank_array)
@@ -76,7 +76,7 @@ def test_can_compress():
 
     board.stage = 3
 
-    showdown = Showdown(hand, board)
+    showdown = Showdown(hand.cards, board.cards)
 
     concat = showdown.compress()
 

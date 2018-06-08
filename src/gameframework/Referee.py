@@ -20,7 +20,7 @@ class Referee:
         rank_matrix = np.zeros((nb_hands, 6))
 
         for i, hand in enumerate(competing_hands):
-            showdown = Showdown(hand, board)
+            showdown = Showdown(hand.cards, board.cards)
             rank_matrix[i, :] = showdown.characterize()
 
         # hands that are still potential winners
