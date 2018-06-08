@@ -5,7 +5,7 @@
 {
   "exp_name": "fully_connected",
   "batch_size": 10,
-  "num_epochs": 4,
+  "num_epochs": 2,
   "data_file": "../../data/head_to_head1.csv",
   "generate_tfrecords": "True",
   "num_data": 10000,

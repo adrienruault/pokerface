@@ -8,3 +8,4 @@ __pycache__/
 .tfrecords
 xp/
 *.csv
+.pytest_cache

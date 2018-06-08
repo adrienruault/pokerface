@@ -73,7 +73,7 @@ class GameMaster(Dealer):
     def bet_round(self):
         if self.state == "finished":
             return
-        if self.state not in self.allowed_betting_actions:
+        if self.bet_round_done is True:
             raise PokerError("Triggering a bet round at an unproper state")
 
         # nb_rounds is incremented by one each time the first_player plays
@@ -162,7 +162,8 @@ class GameMaster(Dealer):
         else:
             # Finish betting round normally
             self.__transfer_bet_to_pot()
-            self._Dealer__state += "-collected"
+            self._Dealer__bet_round_done = True
+            #self._Dealer__state += "-collected"
 
 
 
@@ -219,8 +220,9 @@ class GameMaster(Dealer):
 
 
     def collect_blinds(self):
-        if self.state != "start":
-            raise PokerError("Trying to get blinds in a dealer that is not in start state")
+        if (self.state != "start" or
+            self.state == "start" and self.bet_round_done is True):
+            raise PokerError("Unallowed to get blinds at that game stage")
 
         small_blind_player = self.get_player_from_id(self.__small_blind_player_id)
         big_blind_player = self.get_player_from_id(self.__big_blind_player_id)
@@ -235,8 +237,8 @@ class GameMaster(Dealer):
 
         #self.__pot += (self.__small_blind + self.__big_blind)
 
-
-        self._Dealer__state = "blinds-collected"
+        self._Dealer__bet_round_done = True
+        #self._Dealer__state = "blinds-collected"
 
 
 
