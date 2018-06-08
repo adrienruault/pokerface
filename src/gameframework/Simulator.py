@@ -31,7 +31,7 @@ class Simulator:
 
         train_set = []
         for i in range(nb_trainings):
-            print("training:", i)
+            #print("training:", i)
 
             # The board output by draw_game_situation is an empty board
             # And it is filled up as we go through the coming loop
@@ -39,7 +39,7 @@ class Simulator:
 
             results = []
             for j in range(4):
-                print("\tstage ->", j)
+                #print("\tstage ->", j)
                 win_prob, conf95 = self.simulate_random_head_to_head(
                                                         tol=1e-3,
                                                         hand=hand,
@@ -52,7 +52,7 @@ class Simulator:
                     board.next_stage()
 
 
-            if verbose == True and i%10 == 0:
+            if verbose == True and (i+1)%10 == 0:
                 date = datetime.now()
                 string_date = "[%02d:%02d:%02d]" % (date.hour, date.minute, date.second)
                 print(string_date, "generated", i+1, "trainings")
@@ -62,6 +62,11 @@ class Simulator:
 
             line = compressed_game + results
             train_set += [line]
+
+        if verbose == True:
+            date = datetime.now()
+            string_date = "[%02d:%02d:%02d]" % (date.hour, date.minute, date.second)
+            print(string_date, "finished: generated", i+1, "trainings in total")
 
         return pd.DataFrame(train_set, columns=columns)
 
@@ -83,8 +88,8 @@ class Simulator:
         in the game situation.
         """
         board_stage_ref = board_ref.stage
-        print("\t\t", hand)
-        print("\t\t", board_ref)
+        #print("\t\t", hand)
+        #print("\t\t", board_ref)
 
         drawn_cards_ref = card_pack_ref.drawn_cards
 
@@ -117,15 +122,16 @@ class Simulator:
 
             #print("\t\t -> ", i)
             if (i+1) % test_var_every == 0:
-                print("\t\titer ->", i)
+                #print("\t\titer ->", i)
                 # compute confidence interval of the winning probability estimator
-                _, width_conf_interval = self.compute_bernoulli_estimator(victory_array[:i])
-                print("\t\tp_hat:", _)
-                print("\t\tconf:", width_conf_interval)
+                p_hat, width_conf_interval = self.compute_bernoulli_estimator(victory_array[:i])
+                #print("\t\tp_hat:", p_hat)
+                #print("\t\tconf:", width_conf_interval)
                 if width_conf_interval < tol:
                     break
 
-        p_hat, width_conf_interval = self.compute_bernoulli_estimator(victory_array)
+        if i == nb_max_iter-1:
+            p_hat, width_conf_interval = self.compute_bernoulli_estimator(victory_array)
 
         return p_hat, width_conf_interval
 
