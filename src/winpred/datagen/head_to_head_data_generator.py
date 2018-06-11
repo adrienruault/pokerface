@@ -12,8 +12,8 @@ from gameframework import Simulator
 def main():
 
     simulator = Simulator()
-
-    df = simulator.generate_training_set(nb_trainings=10, verbose = True)
+    nb_trainings = 1000
+    df = simulator.generate_training_set(nb_trainings=nb_trainings, verbose = True)
     df.to_csv(sys.path[0] + '/../../../data/test.csv')
 
 
