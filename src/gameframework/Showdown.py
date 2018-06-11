@@ -195,11 +195,14 @@ class Showdown:
             values_ans[0] = pair_values[-1]
             values_ans[1] = pair_values[-2]
 
-            # spotting the kicker
+            # spotting the last kicker
             for index in range(13, -1, -1):
-                if index != pair_values[-1] and index != pair_values[-2]:
+                if (index in value_array
+                    and index != pair_values[-1]
+                    and index != pair_values[-2]):
                     values_ans[2] = index
-                    return np.append(np.array(3), values_ans)
+                    break
+            return np.append(np.array(3), values_ans)
 
         # check one pair
         if len(pair_values) == 1:
@@ -209,12 +212,15 @@ class Showdown:
             # spotting the kickers
             # in this situation we know that there are only one pair amongst the
             # 7 cards of the showdown therefore no need to worry about the multiplicity
-            # about the card's value when looking for the kickers
+            # of the card's value when looking for the kickers
             nb_kickers_found = 0
-            for index in range(13, -1, -1):
-                if index != pair_values[0] and nb_kickers_found < 3:
+            index = 13
+            while index > 0 and nb_kickers_found < 3:
+                if (index in value_array
+                    and index != pair_values[0]):
                     nb_kickers_found += 1
                     values_ans[nb_kickers_found] = index
+                index -= 1
             return np.append(np.array(2), values_ans)
 
         return np.append(np.array(1), value_array[-5:][::-1])
