@@ -87,3 +87,23 @@ def test_can_compress():
     assert concat[4].value == 2 and concat[4].suit == 3
     assert concat[5].value == 3 and concat[5].suit == 3
     assert concat[6].value == 13 and concat[6].suit == 4
+
+
+
+
+def test_can_identify_particular_situation1():
+
+    hand = []
+    hand += [Card.create_from_string("6-H")]
+    hand += [Card.create_from_string("3-D")]
+
+    board = []
+    board += [Card.create_from_string("A-D")]
+    board += [Card.create_from_string("5-D")]
+    board += [Card.create_from_string("2-H")]
+    board += [Card.create_from_string("K-H")]
+    board += [Card.create_from_string("K-C")]
+
+    showdown = Showdown(hand, board)
+
+    assert showdown.get_string_rank() == "pair"
