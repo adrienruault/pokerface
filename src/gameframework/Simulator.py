@@ -26,8 +26,10 @@ class Simulator:
         columns = ['hand_c1', 'hand_c2',\
                      'board_c1', 'board_c2', 'board_c3',\
                      'board_c4', 'board_c5',\
-                     'winprob_1', 'conf95_1', 'winprob_2', 'conf95_2',\
-                     'winprob_3', 'conf95_3', 'winprob_4', 'conf95_3']
+                     'winprob1', 'drawprob1', 'confwin1', 'confdraw1',\
+                     'winprob2', 'drawprob2', 'confwin2', 'confdraw2',\
+                     'winprob3', 'drawprob3', 'confwin3', 'confdraw3',\
+                     'winprob4', 'drawprob4', 'confwin4', 'confdraw4']
 
         train_set = []
         for i in range(nb_trainings):
@@ -40,13 +42,13 @@ class Simulator:
             results = []
             for j in range(4):
                 #print("\tstage ->", j)
-                win_prob, conf95 = self.simulate_random_head_to_head(
+                win_prob, conf_win, draw_prob, conf_draw = self.simulate_random_head_to_head(
                                                         tol=1e-3,
                                                         hand=hand,
                                                         board_ref=board,
                                                         card_pack_ref=card_pack
                                                         )
-                results +=  [win_prob] + [conf95]
+                results +=  [win_prob] + [draw_prob] + [conf_win] + [conf_draw]
 
                 if j < 3:
                     board.next_stage()
@@ -97,7 +99,8 @@ class Simulator:
 
         nb_max_iter = int(1e5)
         test_var_every = 1000
-        victory_array = np.zeros(nb_max_iter)
+        victory_array = np.zeros(nb_max_iter, dtype=np.int64)
+        draw_array = np.zeros(nb_max_iter, dtype=np.int64)
         for i in range(nb_max_iter):
             # create card_pack thet inherits the cards that have already been drawn
             drawn_cards = list(drawn_cards_ref)
@@ -119,6 +122,7 @@ class Simulator:
             winner_ids = referee.arbitrate([hand, opponent_hand], board)
             showdown1 = Showdown(hand.cards, board.cards)
             showdown2 = Showdown(opponent_hand.cards, board.cards)
+            """
             print()
             print("Game:")
             print("me", hand)
@@ -129,9 +133,12 @@ class Simulator:
             print("\t", showdown2.characterize())
             print("board", board)
             print("winners", winner_ids)
+            """
 
+            # First spotting if their is a draw and then checking
+            # whether player 0 won
             if len(winner_ids) == 2:
-                victory_array[i] = 0.5
+                draw_array[i] = 1 # was 0.5
             elif 0 in winner_ids:
                 victory_array[i] = 1
 
@@ -139,16 +146,16 @@ class Simulator:
             if (i+1) % test_var_every == 0:
                 #print("\t\titer ->", i)
                 # compute confidence interval of the winning probability estimator
-                p_hat, width_conf_interval = self.compute_bernoulli_estimator(victory_array[:i])
-                #print("\t\tp_hat:", p_hat)
-                #print("\t\tconf:", width_conf_interval)
-                if width_conf_interval < tol:
+                p_win_hat, win_confidence = self.compute_bernoulli_estimator(victory_array[:i])
+                p_draw_hat, draw_confidence = self.compute_bernoulli_estimator(draw_array[:i])
+                if win_confidence < tol and draw_confidence < tol:
                     break
 
         if i == nb_max_iter-1:
-            p_hat, width_conf_interval = self.compute_bernoulli_estimator(victory_array)
+            p_win_hat, win_confidence = self.compute_bernoulli_estimator(victory_array)
+            p_draw_hat, draw_confidence = self.compute_bernoulli_estimator(draw_array)
 
-        return p_hat, width_conf_interval
+        return p_win_hat, win_confidence, p_draw_hat, draw_confidence
 
 
 
