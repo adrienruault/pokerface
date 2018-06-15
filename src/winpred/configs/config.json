@@ -3,14 +3,14 @@
 
 
 {
-  "exp_name": "fully_connected",
+  "exp_name": "lstm2000dat",
   "batch_size": 10,
-  "num_epochs": 2,
-  "data_file": "../../data/head_to_head1.csv",
+  "num_epochs": 300,
+  "data_file": "../../data/lstm_2000.csv",
   "generate_tfrecords": "True",
-  "num_data": 10000,
+  "num_data": 2000,
   "train_ratio": 0.8,
   "max_to_keep": 5,
-  "summarize_every_n_iter": 10,
+  "summarize_every_n_iter": 50,
   "test_every_n_iter": 100
 }

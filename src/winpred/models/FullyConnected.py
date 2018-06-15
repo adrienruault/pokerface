@@ -14,16 +14,16 @@ class FullyConnected(BaseModel):
 
 
         self.cards = tf.placeholder(tf.float32,
-                                    shape=(None, 7, 19),
+                                    shape=(None, 7, 17),
                                     name="cards")
 
         self.winprob = tf.placeholder(tf.float32,
                                       shape=(None, 1),
                                       name="winprob")
 
-        flat_cards = tf.reshape(self.cards, shape=(-1, 7*19))
+        flat_cards = tf.reshape(self.cards, shape=(-1, 7*17))
 
-        W_fc1 = tf.Variable(tf.truncated_normal((7*19, 1024), stddev=0.01))
+        W_fc1 = tf.Variable(tf.truncated_normal((7*17, 1024), stddev=0.01))
         b_fc1 = tf.Variable(tf.constant(0.0, shape=(1024,)))
         fc1 = tf.nn.relu(tf.matmul(flat_cards, W_fc1) + b_fc1)
 
