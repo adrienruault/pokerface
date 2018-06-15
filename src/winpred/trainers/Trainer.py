@@ -12,15 +12,20 @@ class Trainer(BaseTrain):
 
         # summary epoch
         summary_list = [tf.summary.scalar('loss', self.model.loss),
-                       tf.summary.scalar('accuracy', self.model.accuracy)]
+                       tf.summary.scalar('accuracy', self.model.accuracy),
+                       tf.summary.scalar('preflop_acc', self.model.preflop_acc),
+                       tf.summary.scalar('flop_acc', self.model.flop_acc),
+                       tf.summary.scalar('turn_acc', self.model.turn_acc),
+                       tf.summary.scalar('river_acc', self.model.river_acc)]
 
         self.summary_ops = tf.summary.merge(summary_list)
 
         self.train_writer = tf.summary.FileWriter(config.train_summary_dir, sess.graph)
         self.test_writer = tf.summary.FileWriter(config.test_summary_dir, sess.graph)
 
+
     def train_epoch(self):
-        num_iter_per_epoch = int(self.config.num_data / self.config.batch_size)
+        num_iter_per_epoch = int(self.data.num_train / self.config.batch_size)
         loop = tqdm(range(num_iter_per_epoch))
         losses = []
         accs = []
@@ -88,7 +93,7 @@ class Trainer(BaseTrain):
         test_dict = {
                      self.model.cards: cards_test,
                      self.model.winprob: winprob_test,
-                     self.model.is_training: True
+                     self.model.is_training: False
                     }
 
         summary = self.sess.run(self.summary_ops, feed_dict=test_dict)

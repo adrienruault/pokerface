@@ -5,7 +5,7 @@ import tensorflow as tf
 
 from DataLoader import DataLoader
 from trainers.Trainer import Trainer
-from models.FullyConnected import FullyConnected as Model
+from models.LSTM import LSTM as Model
 
 from utils.dirs import create_dirs, set_up_experience
 
@@ -23,8 +23,11 @@ def main():
         model = Model(config)
         #load model if exists
         model.load(sess)
+
         # create your data generator
+        # set generate_tfrecords to true in config file to write new tfrecords
         data = DataLoader(config)
+        #data.write_train_and_test_sets(train_ratio=0.8)
 
         # create trainer and pass all the previous components to it
         trainer = Trainer(sess, model, data, config)

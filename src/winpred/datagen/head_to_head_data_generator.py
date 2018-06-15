@@ -9,15 +9,15 @@ sys.path.append(sys.path[0] + "/../../")
 from gameframework import Simulator
 
 
-def main():
+def main(nb_trainings):
 
     simulator = Simulator()
-    nb_trainings = 1000
     df = simulator.generate_training_set(nb_trainings=nb_trainings, verbose = True)
-    df.to_csv(sys.path[0] + '/../../../data/test.csv')
+    df.to_csv(sys.path[0] + '/../../../data/lstm.csv')
 
 
 
 
 if __name__ == '__main__':
-    main()
+    nb_trainings = int(sys.argv[1])
+    main(nb_trainings)

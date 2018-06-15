@@ -1,3 +1,4 @@
+from datetime import datetime
 
 import tensorflow as tf
 
@@ -17,6 +18,10 @@ class BaseTrain:
         thread = tf.train.start_queue_runners(coord=coord)
 
         for cur_epoch in range(self.model.cur_epoch_tensor.eval(self.sess), self.config.num_epochs + 1, 1):
+            date = datetime.now()
+            string_date = "[%02d:%02d:%02d]" % (date.hour, date.minute, date.second)
+            print(string_date, "running epoch", cur_epoch+1, "out of", self.config.num_epochs)
+
             self.train_epoch()
             self.sess.run(self.model.increment_cur_epoch_tensor)
 
