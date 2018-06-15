@@ -4,9 +4,9 @@ import tensorflow as tf
 import numpy as np
 
 
-class LSTM(BaseModel):
+class Model(BaseModel):
     def __init__(self, config):
-        super(LSTM, self).__init__(config)
+        super(Model, self).__init__(config)
         self.config = config
         self.build_model()
         self.init_saver()
@@ -27,8 +27,24 @@ class LSTM(BaseModel):
                                       shape=(None, 4),
                                       name="winprob")
 
-        lstm_size = 128
-        lstm = tf.contrib.rnn.BasicLSTMCell(lstm_size)
+        keep_prob = tf.cond(self.is_training,
+                            lambda: tf.constant(self.config.keep_prob, dtype=tf.float32),
+                            lambda: tf.constant(1.0, dtype=tf.float32))
+
+        with tf.name_scope("lstm"):
+            lstm_size = 256
+            lstm_plain = tf.contrib.rnn.BasicLSTMCell(lstm_size)
+            lstm = tf.contrib.rnn.DropoutWrapper(lstm_plain,
+                                                    input_keep_prob=keep_prob,
+                                                    output_keep_prob=keep_prob)
+
+
+        with tf.name_scope("lstm_init"):
+            # Initial state of the LSTM memory.
+            hidden_state, current_state = tf.cond(self.is_training,
+                                lambda: (tf.zeros([batch_size, lstm_size]),) * 2,
+                                lambda: (tf.zeros([1, lstm_size]),) * 2)
+            state = hidden_state, current_state
 
         with tf.name_scope("embedding_net"):
             # Definition of weights for fully connected before entering the LSTM
@@ -43,14 +59,7 @@ class LSTM(BaseModel):
             W_final = tf.Variable(tf.truncated_normal((lstm_size, 1), stddev=0.01))
             b_final = tf.Variable(tf.constant(0.0, shape=(1,)))
 
-        with tf.name_scope("lstm"):
-            # Initial state of the LSTM memory.
-            hidden_state, current_state = tf.cond(self.is_training,
-                                lambda: (tf.zeros([batch_size, lstm_size]),) * 2,
-                                lambda: (tf.zeros([1, lstm_size]),) * 2)
 
-
-            state = hidden_state, current_state
 
         self.pred = []
         loss = 0.0
@@ -60,11 +69,13 @@ class LSTM(BaseModel):
             with tf.name_scope("embedding_net"):
                 current_card = self.cards[:, timestep, :]
                 fc1 = tf.nn.relu(tf.matmul(current_card, W_fc1) + b_fc1)
-                fc2 = tf.nn.relu(tf.matmul(fc1, W_fc2) + b_fc2)
+                fc1_drop = tf.nn.dropout(fc1, keep_prob=keep_prob)
 
+                fc2 = tf.nn.relu(tf.matmul(fc1, W_fc2) + b_fc2)
+                fc2_drop = tf.nn.dropout(fc2, keep_prob=keep_prob)
 
             with tf.name_scope("lstm"):
-                output, state = lstm(fc2, state)
+                output, state = lstm(fc2_drop, state)
 
             with tf.name_scope("lstm_output"):
                 logits = tf.matmul(output, W_final) + b_final
@@ -80,10 +91,11 @@ class LSTM(BaseModel):
                     loss += tf.losses.mean_squared_error(self.winprob[:, stage],
                                                          self.pred[timestep])
 
-        self.loss = loss
+        with tf.name_scope("loss"):
+            self.loss = tf.identity(loss, name="total_loss")
 
 
-        with tf.name_scope("train"):
+        with tf.name_scope("optimizer"):
             optimizer = tf.train.AdamOptimizer()
 
             self.train_op = tf.contrib.training.create_train_op(
@@ -92,7 +104,7 @@ class LSTM(BaseModel):
                                             global_step=self.global_step_tensor
                                             )
 
-
+        with tf.name_scope("accuracy"):
             self.preflop_acc = tf.reduce_mean(tf.abs(self.pred[1] - self.winprob[:,0]))
             self.flop_acc = tf.reduce_mean(tf.abs(self.pred[4] - self.winprob[:,1]))
             self.turn_acc = tf.reduce_mean(tf.abs(self.pred[5] - self.winprob[:,2]))

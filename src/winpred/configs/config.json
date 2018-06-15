@@ -3,14 +3,14 @@
 
 
 {
-  "exp_name": "lstm2000dat",
+  "exp_name": "lstm_dropout0.9_5000dat",
   "batch_size": 10,
-  "num_epochs": 300,
-  "data_file": "../../data/lstm_2000.csv",
+  "num_epochs": 400,
+  "data_file": "../../data/lstm_5000.csv",
   "generate_tfrecords": "True",
-  "num_data": 2000,
   "train_ratio": 0.8,
   "max_to_keep": 5,
   "summarize_every_n_iter": 50,
-  "test_every_n_iter": 100
+  "test_every_n_iter": 100,
+  "keep_prob": 0.9
 }

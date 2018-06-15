@@ -3,9 +3,9 @@ from base.BaseModel import BaseModel
 import tensorflow as tf
 
 
-class FullyConnected(BaseModel):
+class Model(BaseModel):
     def __init__(self, config):
-        super(FullyConnected, self).__init__(config)
+        super(Model, self).__init__(config)
         self.build_model()
         self.init_saver()
 

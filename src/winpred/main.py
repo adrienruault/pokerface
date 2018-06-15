@@ -5,7 +5,7 @@ import tensorflow as tf
 
 from DataLoader import DataLoader
 from trainers.Trainer import Trainer
-from models.LSTM import LSTM as Model
+from models.LSTM_dropout import Model
 
 from utils.dirs import create_dirs, set_up_experience
 

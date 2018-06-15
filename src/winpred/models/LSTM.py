@@ -4,9 +4,9 @@ import tensorflow as tf
 import numpy as np
 
 
-class LSTM(BaseModel):
+class Model(BaseModel):
     def __init__(self, config):
-        super(LSTM, self).__init__(config)
+        super(Model, self).__init__(config)
         self.config = config
         self.build_model()
         self.init_saver()
@@ -27,8 +27,19 @@ class LSTM(BaseModel):
                                       shape=(None, 4),
                                       name="winprob")
 
-        lstm_size = 128
-        lstm = tf.contrib.rnn.BasicLSTMCell(lstm_size)
+
+
+        with tf.name_scope("lstm"):
+            lstm_size = 128
+            lstm = tf.contrib.rnn.BasicLSTMCell(lstm_size)
+
+        with tf.name_scope("lstm_init")
+            # Initial state of the LSTM memory.
+            hidden_state, current_state = tf.cond(self.is_training,
+                                lambda: (tf.zeros([batch_size, lstm_size]),) * 2,
+                                lambda: (tf.zeros([1, lstm_size]),) * 2)
+            state = hidden_state, current_state
+
 
         with tf.name_scope("embedding_net"):
             # Definition of weights for fully connected before entering the LSTM
@@ -43,14 +54,6 @@ class LSTM(BaseModel):
             W_final = tf.Variable(tf.truncated_normal((lstm_size, 1), stddev=0.01))
             b_final = tf.Variable(tf.constant(0.0, shape=(1,)))
 
-        with tf.name_scope("lstm"):
-            # Initial state of the LSTM memory.
-            hidden_state, current_state = tf.cond(self.is_training,
-                                lambda: (tf.zeros([batch_size, lstm_size]),) * 2,
-                                lambda: (tf.zeros([1, lstm_size]),) * 2)
-
-
-            state = hidden_state, current_state
 
         self.pred = []
         loss = 0.0
@@ -80,7 +83,8 @@ class LSTM(BaseModel):
                     loss += tf.losses.mean_squared_error(self.winprob[:, stage],
                                                          self.pred[timestep])
 
-        self.loss = loss
+        with tf.name_scope("loss"):
+            self.loss = tf.identity(loss, name="total_loss")
 
 
         with tf.name_scope("train"):
