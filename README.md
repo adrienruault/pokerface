@@ -3,7 +3,7 @@
 # pokerface
 
 
-The idea of this project is to use reinforcement learning to create an AI able to play poker.
+Development of a reinforcement learning algorithm to play poker.
 
 
 ## Requirements
